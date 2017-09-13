@@ -30,7 +30,7 @@
         app:layout_constraintHorizontal_bias="0.0" >
 
         <ImageView
-            android:id="@+id/draw_direct_button"
+            android:id="@+id/crop_direct_button"
             android:layout_width="45dp"
             android:layout_height="52dp"
             android:src="@drawable/crop_direct"
@@ -39,12 +39,12 @@
             />
 
         <ImageView
-            android:id="@+id/draw_ratio_button"
+            android:id="@+id/crop_ratio_button"
             android:layout_width="45dp"
             android:layout_height="52dp"
             android:src="@drawable/crop_ratio"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/draw_direct_button"
+            app:layout_constraintLeft_toRightOf="@id/crop_direct_button"
             android:alpha="0.2"
             />
 

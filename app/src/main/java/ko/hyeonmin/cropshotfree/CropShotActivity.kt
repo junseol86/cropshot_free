@@ -9,7 +9,6 @@ import android.view.TextureView
 import android.view.Window
 import ko.hyeonmin.cropshotfree.uitls.CameraAPI
 import android.view.View
-import android.widget.Button
 import ko.hyeonmin.cropshotfree.extended_views.CanvasView
 import ko.hyeonmin.cropshotfree.extended_views.GetPermissionButton
 import ko.hyeonmin.cropshotfree.listeners.*
