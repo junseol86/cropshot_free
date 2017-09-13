@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">CropShot</string>
+    <string name="activate_camera">Activate Camera</string>
+</resources>
