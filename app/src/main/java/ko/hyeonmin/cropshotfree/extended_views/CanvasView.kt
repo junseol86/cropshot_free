@@ -15,9 +15,9 @@ class CanvasView: View, View.OnTouchListener {
 
     var activity: CropShotActivity? = null
     var sizeRect: Rect = Rect(0, 0, 0, 0)
-    val takenRect: Rect = Rect(0, 0, 0, 0)
+    val cropRect: Rect = Rect(0, 0, 0, 0)
     val sizePaint = Paint()
-    val takenPaint = Paint()
+    val cropPaint = Paint()
 
     var leftShadeRect: Rect = Rect(0, 0, 0, 0)
     val leftShadePaint = Paint()
@@ -36,6 +36,8 @@ class CanvasView: View, View.OnTouchListener {
     val rightDarkerShadePaint = Paint()
     var bottomDarkerShadeRect: Rect = Rect(0, 0, 0, 0)
     val bottomDarkerShadePaint = Paint()
+    var ratioOuterRect: Rect = Rect(0, 0, 0, 0)
+    val ratioOuterPaint = Paint()
 
     var takenWidth = 0
     var takenHeight = 0
@@ -45,6 +47,7 @@ class CanvasView: View, View.OnTouchListener {
     var fromToXY = hashMapOf(0 to 0f, 1 to 0f, 2 to 0f, 3 to 0f)
     var cropXY = hashMapOf(0 to 0f, 1 to 0f, 2 to 0f, 3 to 0f)
     var ratioModeOuterXY = hashMapOf(0 to 0, 1 to 0, 2 to 0, 3 to 0)
+    var ratioModeHorizontal = true
     var touching = false
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
@@ -54,9 +57,13 @@ class CanvasView: View, View.OnTouchListener {
         sizePaint.style = Paint.Style.STROKE
         sizePaint.strokeWidth = 4f
         sizePaint.color = Color.WHITE
-        takenPaint.style = Paint.Style.STROKE
-        takenPaint.strokeWidth = 4f
-        takenPaint.color = Color.WHITE
+        cropPaint.style = Paint.Style.STROKE
+        cropPaint.strokeWidth = 4f
+        cropPaint.color = Color.WHITE
+
+        ratioOuterPaint.style = Paint.Style.STROKE
+        ratioOuterPaint.strokeWidth = 1f
+        ratioOuterPaint.color = Color.WHITE
 
         leftShadePaint.color = Color.argb(128, 0, 0, 0)
         leftShadePaint.style = Paint.Style.FILL
@@ -93,8 +100,6 @@ class CanvasView: View, View.OnTouchListener {
                     canvas?.drawRect(rightShadeRect, rightShadePaint)
                     canvas?.drawRect(bottomShadeRect, bottomShadePaint)
 
-                    takenRect.set(cropXY[0]!!.toInt(), cropXY[1]!!.toInt(), cropXY[2]!!.toInt(), cropXY[3]!!.toInt())
-                    canvas?.drawRect(takenRect, takenPaint)
                 }
             }
             activity?.console?.CROP_RATIO_MODE -> {
@@ -108,30 +113,30 @@ class CanvasView: View, View.OnTouchListener {
                 canvas?.drawRect(rightDarkerShadeRect, rightDarkerShadePaint)
                 canvas?.drawRect(bottomDarkerShadeRect, bottomDarkerShadePaint)
 
-                if (touching && (Math.abs(fromToXY[0]!! - fromToXY[2]!!) > 10 && Math.abs(fromToXY[1]!! - fromToXY[3]!!) > 10)) {
+                ratioOuterRect.set(ratioModeOuterXY[0]!!, ratioModeOuterXY[1]!!, ratioModeOuterXY[2]!!, ratioModeOuterXY[3]!!)
+                canvas?.drawRect(ratioOuterRect, ratioOuterPaint)
 
-
-                    if (Math.abs((fromToXY[0]!! - fromToXY[2]!!) / (fromToXY[1]!! - fromToXY[3]!!)) > (width - 2 * sizeShrink).toFloat() / (height - 2 * sizeShrink).toFloat()) {
-                        topShadeRect.set(sizeShrink, sizeShrink, width - sizeShrink, (height - takenHeight) / 2)
-                        bottomShadeRect.set(sizeShrink, (height + takenHeight) / 2, width - sizeShrink, height - sizeShrink)
-                        canvas?.drawRect(topShadeRect, topShadePaint)
-                        canvas?.drawRect(bottomShadeRect, bottomShadePaint)
-
-                        takenHeight = (Math.abs(fromToXY[1]!! - fromToXY[3]!!) * (width - 2f * sizeShrink) / Math.abs(fromToXY[0]!! - fromToXY[2]!!)).toInt()
-                        takenRect.set(sizeShrink, (height - takenHeight) / 2, width - sizeShrink, (height + takenHeight) / 2)
-                    } else {
-                        leftShadeRect.set(sizeShrink, sizeShrink, (width - takenWidth) / 2, height - sizeShrink)
-                        rightShadeRect.set((width + takenWidth) / 2, sizeShrink, width - sizeShrink, height - sizeShrink)
+                if (touching) {
+                    if (ratioModeHorizontal) {
+                        leftShadeRect.set(ratioModeOuterXY[0]!!, ratioModeOuterXY[1]!!, cropXY[0]!!.toInt(), ratioModeOuterXY[3]!!)
+                        rightShadeRect.set(cropXY[2]!!.toInt(), ratioModeOuterXY[1]!!, ratioModeOuterXY[2]!!, ratioModeOuterXY[3]!!)
                         canvas?.drawRect(leftShadeRect, leftShadePaint)
                         canvas?.drawRect(rightShadeRect, rightShadePaint)
-
-                        takenWidth = (Math.abs(fromToXY[0]!! - fromToXY[2]!!) * (height - 2f * sizeShrink) / Math.abs(fromToXY[1]!! - fromToXY[3]!!)).toInt()
-                        takenRect.set((width - takenWidth) / 2, sizeShrink, (width + takenWidth) / 2, height - sizeShrink)
+                    } else {
+                        topShadeRect.set(ratioModeOuterXY[0]!!, ratioModeOuterXY[1]!!, ratioModeOuterXY[2]!!, cropXY[1]!!.toInt())
+                        bottomShadeRect.set(ratioModeOuterXY[0]!!, cropXY[3]!!.toInt(), ratioModeOuterXY[2]!!, ratioModeOuterXY[3]!!)
+                        canvas?.drawRect(topShadeRect, topShadePaint)
+                        canvas?.drawRect(bottomShadeRect, bottomShadePaint)
                     }
-                    canvas?.drawRect(takenRect, takenPaint)
                 }
             }
         }
+
+        if (touching) {
+            cropRect.set(cropXY[0]!!.toInt(), cropXY[1]!!.toInt(), cropXY[2]!!.toInt(), cropXY[3]!!.toInt())
+            canvas?.drawRect(cropRect, cropPaint)
+        }
+
     }
 
     fun setRatioModeShade() {
@@ -178,12 +183,21 @@ class CanvasView: View, View.OnTouchListener {
                         fromToXY[2] = event.x
                         fromToXY[3] = event.y
 
-
+                        if (Math.abs((fromToXY[0]!! - fromToXY[2]!!) / (fromToXY[1]!! - fromToXY[3]!!)) > (width - 2 * sizeShrink).toFloat() / (height - 2 * sizeShrink).toFloat()) {
+                            ratioModeHorizontal = true
+                            cropXY[0] = Math.min(ratioModeOuterXY[0]!! + Math.abs((fromToXY[0]!! - fromToXY[2]!!)), width / 2f - 10)
+                            cropXY[1] = ratioModeOuterXY[1]!!.toFloat()
+                            cropXY[2] = Math.max(ratioModeOuterXY[2]!! - Math.abs((fromToXY[0]!! - fromToXY[2]!!)), width / 2f + 10)
+                            cropXY[3] = ratioModeOuterXY[3]!!.toFloat()
+                        } else {
+                            ratioModeHorizontal = false
+                            cropXY[0] = ratioModeOuterXY[0]!!.toFloat()
+                            cropXY[1] = Math.min(ratioModeOuterXY[1]!! + Math.abs((fromToXY[1]!! - fromToXY[3]!!)), height / 2f - 10)
+                            cropXY[2] = ratioModeOuterXY[2]!!.toFloat()
+                            cropXY[3] = Math.max(ratioModeOuterXY[3]!! - Math.abs((fromToXY[1]!! - fromToXY[3]!!)), height / 2f + 10)
+                        }
                     }
                 }
-                    
-
-
                 invalidate()
             }
             MotionEvent.ACTION_UP -> {
