@@ -32,7 +32,7 @@
         <ImageView
             android:id="@+id/crop_direct_button"
             android:layout_width="45dp"
-            android:layout_height="52dp"
+            android:layout_height="match_parent"
             android:src="@drawable/crop_direct"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -41,11 +41,18 @@
         <ImageView
             android:id="@+id/crop_ratio_button"
             android:layout_width="45dp"
-            android:layout_height="52dp"
+            android:layout_height="match_parent"
             android:src="@drawable/crop_ratio"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toRightOf="@id/crop_direct_button"
             android:alpha="0.2"
+            />
+        <ko.hyeonmin.cropshotfree.extended_views.SizerView
+            android:id="@+id/sizerView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintLeft_toRightOf="@id/crop_ratio_button"
+            app:layout_constraintRight_toRightOf="parent"
             />
 
     </android.support.constraint.ConstraintLayout>

@@ -41,10 +41,10 @@ class CanvasView: View, View.OnTouchListener {
     var takenHeight = 0
 
     // fromX, fromY, toX, toY
-    var sizeShrinkInit = 0
     var sizeShrink = 0
     var fromToXY = hashMapOf(0 to 0f, 1 to 0f, 2 to 0f, 3 to 0f)
     var cropXY = hashMapOf(0 to 0f, 1 to 0f, 2 to 0f, 3 to 0f)
+    var ratioModeOuterXY = hashMapOf(0 to 0, 1 to 0, 2 to 0, 3 to 0)
     var touching = false
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
@@ -79,10 +79,6 @@ class CanvasView: View, View.OnTouchListener {
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        if (sizeShrinkInit == 0) {
-            sizeShrinkInit = width/10
-            sizeShrink = width/10
-        }
 
         when (activity?.console?.crop_mode) {
             activity?.console?.CROP_DIRECT_MODE -> {
@@ -103,10 +99,10 @@ class CanvasView: View, View.OnTouchListener {
             }
             activity?.console?.CROP_RATIO_MODE -> {
 
-                leftDarkerShadeRect.set(0, sizeShrink, sizeShrink, height - sizeShrink)
-                topDarkerShadeRect.set(0, 0, width, sizeShrink)
-                rightDarkerShadeRect.set(width - sizeShrink, sizeShrink, width, height - sizeShrink)
-                bottomDarkerShadeRect.set(0, height - sizeShrink, width, height)
+                leftDarkerShadeRect.set(0, ratioModeOuterXY[1]!!, ratioModeOuterXY[0]!!, ratioModeOuterXY[3]!!)
+                topDarkerShadeRect.set(0, 0, width, ratioModeOuterXY[1]!!)
+                rightDarkerShadeRect.set(ratioModeOuterXY[2]!!, ratioModeOuterXY[1]!!, width, ratioModeOuterXY[3]!!)
+                bottomDarkerShadeRect.set(0, ratioModeOuterXY[3]!!, width, height)
                 canvas?.drawRect(leftDarkerShadeRect, leftDarkerShadePaint)
                 canvas?.drawRect(topDarkerShadeRect, topDarkerShadePaint)
                 canvas?.drawRect(rightDarkerShadeRect, rightDarkerShadePaint)
@@ -138,6 +134,14 @@ class CanvasView: View, View.OnTouchListener {
         }
     }
 
+    fun setRatioModeShade() {
+        sizeShrink = (width * (1 - activity!!.console!!.sizerView!!.size)).toInt()
+        ratioModeOuterXY[0] = sizeShrink
+        ratioModeOuterXY[1] = sizeShrink
+        ratioModeOuterXY[2] = width - sizeShrink
+        ratioModeOuterXY[3] = height - sizeShrink
+    }
+
     override fun onTouch(view: View?, event: MotionEvent?): Boolean {
         when (event!!.action) {
             MotionEvent.ACTION_DOWN -> {
@@ -152,6 +156,7 @@ class CanvasView: View, View.OnTouchListener {
                         cropXY[3] = event.y
                     }
                     activity?.console?.CROP_RATIO_MODE -> {
+
                         fromToXY[0] = event.x
                         fromToXY[1] = event.y
                     }
@@ -170,12 +175,13 @@ class CanvasView: View, View.OnTouchListener {
                         cropXY[3] = Math.max(cropXY[3]!!, event.y)
                     }
                     activity?.console?.CROP_RATIO_MODE -> {
+                        fromToXY[2] = event.x
+                        fromToXY[3] = event.y
+
 
                     }
                 }
                     
-                fromToXY[2] = event.x
-                fromToXY[3] = event.y
 
 
                 invalidate()

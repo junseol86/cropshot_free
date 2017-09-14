@@ -9,6 +9,8 @@ import android.view.View
  */
 class SizerView : View {
 
+    var size = 0.9f
+
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
     }
 
