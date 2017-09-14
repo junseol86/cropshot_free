@@ -44,7 +44,7 @@ class CanvasView: View, View.OnTouchListener {
     var sizeShrinkInit = 0
     var sizeShrink = 0
     var fromToXY = hashMapOf(0 to 0f, 1 to 0f, 2 to 0f, 3 to 0f)
-    var maxMinXY = hashMapOf(0 to 0f, 1 to 0f, 2 to 0f, 3 to 0f)
+    var cropXY = hashMapOf(0 to 0f, 1 to 0f, 2 to 0f, 3 to 0f)
     var touching = false
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
@@ -88,16 +88,16 @@ class CanvasView: View, View.OnTouchListener {
             activity?.console?.CROP_DIRECT_MODE -> {
 
                 if (touching) {
-                    leftShadeRect.set(0, maxMinXY[1]!!.toInt(), maxMinXY[0]!!.toInt(), maxMinXY[3]!!.toInt())
-                    topShadeRect.set(0, 0, width, maxMinXY[1]!!.toInt())
-                    rightShadeRect.set(maxMinXY[2]!!.toInt(), maxMinXY[1]!!.toInt(), width, maxMinXY[3]!!.toInt())
-                    bottomShadeRect.set(0, maxMinXY[3]!!.toInt(), width, height)
+                    leftShadeRect.set(0, cropXY[1]!!.toInt(), cropXY[0]!!.toInt(), cropXY[3]!!.toInt())
+                    topShadeRect.set(0, 0, width, cropXY[1]!!.toInt())
+                    rightShadeRect.set(cropXY[2]!!.toInt(), cropXY[1]!!.toInt(), width, cropXY[3]!!.toInt())
+                    bottomShadeRect.set(0, cropXY[3]!!.toInt(), width, height)
                     canvas?.drawRect(leftShadeRect, leftShadePaint)
                     canvas?.drawRect(topShadeRect, topShadePaint)
                     canvas?.drawRect(rightShadeRect, rightShadePaint)
                     canvas?.drawRect(bottomShadeRect, bottomShadePaint)
 
-                    takenRect.set(maxMinXY[0]!!.toInt(), maxMinXY[1]!!.toInt(), maxMinXY[2]!!.toInt(), maxMinXY[3]!!.toInt())
+                    takenRect.set(cropXY[0]!!.toInt(), cropXY[1]!!.toInt(), cropXY[2]!!.toInt(), cropXY[3]!!.toInt())
                     canvas?.drawRect(takenRect, takenPaint)
                 }
             }
@@ -143,25 +143,40 @@ class CanvasView: View, View.OnTouchListener {
             MotionEvent.ACTION_DOWN -> {
                 activity?.console?.active = false
                 activity?.panel?.active = false
-                fromToXY[0] = event.x
-                fromToXY[1] = event.y
 
-                maxMinXY[0] = event.x
-                maxMinXY[1] = event.y
-                maxMinXY[2] = event.x
-                maxMinXY[3] = event.y
+                when (activity?.console?.crop_mode) {
+                    activity?.console?.CROP_DIRECT_MODE -> {
+                        cropXY[0] = event.x
+                        cropXY[1] = event.y
+                        cropXY[2] = event.x
+                        cropXY[3] = event.y
+                    }
+                    activity?.console?.CROP_RATIO_MODE -> {
+                        fromToXY[0] = event.x
+                        fromToXY[1] = event.y
+                    }
+                }
 
                 touching = true
                 invalidate()
             }
             MotionEvent.ACTION_MOVE -> {
+
+                when (activity?.console?.crop_mode) {
+                    activity?.console?.CROP_DIRECT_MODE -> {
+                        cropXY[0] = Math.min(cropXY[0]!!, event.x)
+                        cropXY[1] = Math.min(cropXY[1]!!, event.y)
+                        cropXY[2] = Math.max(cropXY[2]!!, event.x)
+                        cropXY[3] = Math.max(cropXY[3]!!, event.y)
+                    }
+                    activity?.console?.CROP_RATIO_MODE -> {
+
+                    }
+                }
+                    
                 fromToXY[2] = event.x
                 fromToXY[3] = event.y
 
-                maxMinXY[0] = Math.min(maxMinXY[0]!!, event.x)
-                maxMinXY[1] = Math.min(maxMinXY[1]!!, event.y)
-                maxMinXY[2] = Math.max(maxMinXY[2]!!, event.x)
-                maxMinXY[3] = Math.max(maxMinXY[3]!!, event.y)
 
                 invalidate()
             }
