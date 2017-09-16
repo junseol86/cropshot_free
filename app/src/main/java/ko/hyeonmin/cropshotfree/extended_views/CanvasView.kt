@@ -14,33 +14,30 @@ import ko.hyeonmin.cropshotfree.CropShotActivity
 class CanvasView: View, View.OnTouchListener {
 
     var activity: CropShotActivity? = null
-    var sizeRect: Rect = Rect(0, 0, 0, 0)
-    val cropRect: Rect = Rect(0, 0, 0, 0)
-    val sizePaint = Paint()
-    val cropPaint = Paint()
+    private val cropRect: Rect = Rect(0, 0, 0, 0)
+    private val sizePaint = Paint()
+    private val cropPaint = Paint()
 
-    var leftShadeRect: Rect = Rect(0, 0, 0, 0)
-    val leftShadePaint = Paint()
-    var topShadeRect: Rect = Rect(0, 0, 0, 0)
-    val topShadePaint = Paint()
-    var rightShadeRect: Rect = Rect(0, 0, 0, 0)
-    val rightShadePaint = Paint()
-    var bottomShadeRect: Rect = Rect(0, 0, 0, 0)
-    val bottomShadePaint = Paint()
+    private var leftShadeRect: Rect = Rect(0, 0, 0, 0)
+    private val leftShadePaint = Paint()
+    private var topShadeRect: Rect = Rect(0, 0, 0, 0)
+    private val topShadePaint = Paint()
+    private var rightShadeRect: Rect = Rect(0, 0, 0, 0)
+    private val rightShadePaint = Paint()
+    private var bottomShadeRect: Rect = Rect(0, 0, 0, 0)
+    private val bottomShadePaint = Paint()
 
-    var leftDarkerShadeRect: Rect = Rect(0, 0, 0, 0)
-    val leftDarkerShadePaint = Paint()
-    var topDarkerShadeRect: Rect = Rect(0, 0, 0, 0)
-    val topDarkerShadePaint = Paint()
-    var rightDarkerShadeRect: Rect = Rect(0, 0, 0, 0)
-    val rightDarkerShadePaint = Paint()
-    var bottomDarkerShadeRect: Rect = Rect(0, 0, 0, 0)
-    val bottomDarkerShadePaint = Paint()
-    var ratioOuterRect: Rect = Rect(0, 0, 0, 0)
-    val ratioOuterPaint = Paint()
+    private var leftDarkerShadeRect: Rect = Rect(0, 0, 0, 0)
+    private val leftDarkerShadePaint = Paint()
+    private var topDarkerShadeRect: Rect = Rect(0, 0, 0, 0)
+    private val topDarkerShadePaint = Paint()
+    private var rightDarkerShadeRect: Rect = Rect(0, 0, 0, 0)
+    private val rightDarkerShadePaint = Paint()
+    private var bottomDarkerShadeRect: Rect = Rect(0, 0, 0, 0)
+    private val bottomDarkerShadePaint = Paint()
+    private var ratioOuterRect: Rect = Rect(0, 0, 0, 0)
+    private val ratioOuterPaint = Paint()
 
-    var takenWidth = 0
-    var takenHeight = 0
 
     // fromX, fromY, toX, toY
     var sizeShrink = 0
@@ -140,11 +137,12 @@ class CanvasView: View, View.OnTouchListener {
     }
 
     fun setRatioModeShade() {
-        sizeShrink = (width * (1 - activity!!.console!!.sizerView!!.size)).toInt()
+        sizeShrink = ((width / 2 - 10) * (1 - activity!!.console!!.sizerView!!.size)).toInt()
         ratioModeOuterXY[0] = sizeShrink
         ratioModeOuterXY[1] = sizeShrink
         ratioModeOuterXY[2] = width - sizeShrink
         ratioModeOuterXY[3] = height - sizeShrink
+        invalidate()
     }
 
     override fun onTouch(view: View?, event: MotionEvent?): Boolean {
@@ -166,9 +164,7 @@ class CanvasView: View, View.OnTouchListener {
                         fromToXY[1] = event.y
                     }
                 }
-
                 touching = true
-                invalidate()
             }
             MotionEvent.ACTION_MOVE -> {
 
@@ -183,7 +179,7 @@ class CanvasView: View, View.OnTouchListener {
                         fromToXY[2] = event.x
                         fromToXY[3] = event.y
 
-                        if (Math.abs((fromToXY[0]!! - fromToXY[2]!!) / (fromToXY[1]!! - fromToXY[3]!!)) > (width - 2 * sizeShrink).toFloat() / (height - 2 * sizeShrink).toFloat()) {
+                        if (Math.abs(fromToXY[0]!! - fromToXY[2]!!) > Math.abs(fromToXY[1]!! - fromToXY[3]!!)) {
                             ratioModeHorizontal = true
                             cropXY[0] = Math.min(ratioModeOuterXY[0]!! + Math.abs((fromToXY[0]!! - fromToXY[2]!!)), width / 2f - 10)
                             cropXY[1] = ratioModeOuterXY[1]!!.toFloat()
