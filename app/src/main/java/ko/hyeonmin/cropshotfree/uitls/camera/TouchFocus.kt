@@ -12,16 +12,16 @@ import android.view.View
  */
 class TouchFocus(cameraAPI: CameraAPI) {
 
-    val cameraApi = cameraAPI
+    private val cameraApi = cameraAPI
     var sensorArraySize: Rect? = null
     var sensorW = 0
     var sensorH = 0
     var availableXY = hashMapOf(0 to 0, 1 to 0, 2 to 0, 3 to 0)
-    var focusXY: MeteringRectangle? = null
-    var lastCropXY = hashMapOf(0 to 0, 1 to 0, 2 to 0, 3 to 0)
+    private var focusXY: MeteringRectangle? = null
+    private var lastCropXY = hashMapOf(0 to 0, 1 to 0, 2 to 0, 3 to 0)
     var sendingFocusRequest = false
 
-    val SENSIBILITY = 10
+    private val SENSIBILITY = 15
 
     fun focusRequest(cropXY: HashMap<Int, Int>, view: View) {
         if (

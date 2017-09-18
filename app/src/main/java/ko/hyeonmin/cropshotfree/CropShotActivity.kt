@@ -21,6 +21,7 @@ class CropShotActivity : Activity() {
     var console: Console? = null
     var panel: Panel? = null
     var canvasView: CanvasView? = null
+    var screenCaptor = ScreenCaptor(this)
 
     var getPermissionButton: GetPermissionButton? = null
 
@@ -37,6 +38,9 @@ class CropShotActivity : Activity() {
 
         getPermissionButton = findViewById(R.id.getPermissionButton) as GetPermissionButton
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), 0)
+            }
             if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 getPermissionButton?.visibility= View.VISIBLE
                 getPermissionButton?.setOnClickListener {

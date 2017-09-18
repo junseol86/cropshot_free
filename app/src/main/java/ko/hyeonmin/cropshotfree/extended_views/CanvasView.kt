@@ -203,6 +203,8 @@ class CanvasView: View, View.OnTouchListener {
                 activity?.panel?.active = true
                 touching = false
                 invalidate()
+
+                activity?.screenCaptor?.takeScreenShot(cropXY)
             }
         }
         return true
