@@ -1,19 +1,16 @@
-package ko.hyeonmin.cropshotfree.uitls
+package ko.hyeonmin.cropshotfree.uitls.camera
 
 import android.hardware.camera2.CaptureRequest
 import android.hardware.camera2.CameraDevice
 import android.hardware.camera2.CameraCaptureSession
 import android.util.Size
 import android.hardware.camera2.CameraManager
-import android.app.Activity
 import android.content.Context
 import android.hardware.camera2.CameraAccessException
 import android.graphics.SurfaceTexture
 import android.hardware.camera2.CameraCharacteristics
 import android.view.Surface
 import java.util.*
-import android.hardware.camera2.TotalCaptureResult
-import android.hardware.camera2.CaptureResult
 import android.view.View
 import ko.hyeonmin.cropshotfree.CropShotActivity
 
@@ -30,24 +27,28 @@ class CameraAPI(activity: CropShotActivity) {
 
     private var mCameraSize: Size? = null
 
-    private var mCaptureSession: CameraCaptureSession? = null
-    private var mCameraDevice: CameraDevice? = null
-    private var mPreviewRequestBuilder: CaptureRequest.Builder? = null
+    var mCharacteristics: CameraCharacteristics? = null
+    var mCaptureSession: CameraCaptureSession? = null
+    var mCameraDevice: CameraDevice? = null
+    var mPreviewRequestBuilder: CaptureRequest.Builder? = null
+    var mCaptureCallback: CaptureCallback = CaptureCallback(this)
+
+    var mTouchFocus = TouchFocus(this)
 
     init {
         activity.canvasView?.visibility = View.VISIBLE
     }
 
-    fun CameraManager(activity: Activity): CameraManager {
-        return activity.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+    fun CameraManager(): CameraManager {
+        return activity?.getSystemService(Context.CAMERA_SERVICE) as CameraManager
     }
 
-    fun CameraCharacteristics(cameraManager: CameraManager): String? {
+    fun CameraIdFromCharacteristics(cameraManager: CameraManager): String? {
         try {
             for (cameraId in cameraManager.cameraIdList) {
-                val characteristics = cameraManager.getCameraCharacteristics(cameraId)
-                if (characteristics.get(CameraCharacteristics.LENS_FACING) === CameraCharacteristics.LENS_FACING_BACK) {
-                    val map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
+                mCharacteristics = cameraManager.getCameraCharacteristics(cameraId)
+                if (mCharacteristics?.get(CameraCharacteristics.LENS_FACING) === CameraCharacteristics.LENS_FACING_BACK) {
+                    val map = mCharacteristics?.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
                     val sizes = map!!.getOutputSizes(SurfaceTexture::class.java)
 
                     mCameraSize = sizes[0]
@@ -101,7 +102,7 @@ class CameraAPI(activity: CropShotActivity) {
         }
     }
 
-    private fun CaptureSession(cameraDevice: CameraDevice, surface: Surface) {
+    private fun setCaptureSession(cameraDevice: CameraDevice, surface: Surface) {
         try {
             cameraDevice.createCaptureSession(Collections.singletonList(surface), mCaptureSessionCallback, null)
         } catch (e: CameraAccessException) {
@@ -109,7 +110,7 @@ class CameraAPI(activity: CropShotActivity) {
         }
     }
 
-    private fun CaptureRequest(cameraDevice: CameraDevice, surface: Surface) {
+    private fun setCaptureRequest(cameraDevice: CameraDevice, surface: Surface) {
         try {
             mPreviewRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW)
             mPreviewRequestBuilder?.addTarget(surface)
@@ -118,22 +119,13 @@ class CameraAPI(activity: CropShotActivity) {
         }
     }
 
-    private val mCaptureCallback = object : CameraCaptureSession.CaptureCallback() {
-        override fun onCaptureProgressed(session: CameraCaptureSession, request: CaptureRequest, partialResult: CaptureResult) {
-            super.onCaptureProgressed(session, request, partialResult)
-        }
-        override fun onCaptureCompleted(session: CameraCaptureSession, request: CaptureRequest, result: TotalCaptureResult) {
-            super.onCaptureCompleted(session, request, result)
-        }
-    }
-
     fun onCameraDeviceOpened() {
         val texture = activity?.textureView?.surfaceTexture
         texture?.setDefaultBufferSize(mCameraSize!!.height, mCameraSize!!.width)
         val surface = Surface(texture)
 
-        CaptureSession(mCameraDevice!!, surface)
-        CaptureRequest(mCameraDevice!!, surface)
+        setCaptureSession(mCameraDevice!!, surface)
+        setCaptureRequest(mCameraDevice!!, surface)
     }
 
     fun closeCamera() {

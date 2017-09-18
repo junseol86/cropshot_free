@@ -53,6 +53,7 @@
             android:layout_height="match_parent"
             app:layout_constraintLeft_toRightOf="@id/crop_ratio_button"
             app:layout_constraintRight_toRightOf="parent"
+            android:alpha="0.2"
             />
 
     </android.support.constraint.ConstraintLayout>

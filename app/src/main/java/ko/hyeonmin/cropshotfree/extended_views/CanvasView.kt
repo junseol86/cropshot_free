@@ -195,6 +195,8 @@ class CanvasView: View, View.OnTouchListener {
                     }
                 }
                 invalidate()
+
+                activity?.cameraApi?.mTouchFocus?.focusRequest(hashMapOf(0 to cropXY[0]!!.toInt(), 1 to cropXY[1]!!.toInt(), 2 to cropXY[2]!!.toInt(), 3 to cropXY[3]!!.toInt()), this)
             }
             MotionEvent.ACTION_UP -> {
                 activity?.console?.active = true

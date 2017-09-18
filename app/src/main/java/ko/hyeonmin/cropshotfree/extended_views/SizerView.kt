@@ -60,6 +60,9 @@ class SizerView : View, View.OnTouchListener {
 
 
     override fun onTouch(view: View?, event: MotionEvent?): Boolean {
+
+        if (activity!!.console!!.crop_mode != activity!!.console!!.CROP_RATIO_MODE) return true
+
         when (event!!.action) {
             MotionEvent.ACTION_DOWN -> {
                 if (event.x in sizeLineLength .. sizeLineLength + height) {

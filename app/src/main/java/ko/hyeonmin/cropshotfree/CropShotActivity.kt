@@ -7,7 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.TextureView
 import android.view.Window
-import ko.hyeonmin.cropshotfree.uitls.CameraAPI
+import ko.hyeonmin.cropshotfree.uitls.camera.CameraAPI
 import android.view.View
 import ko.hyeonmin.cropshotfree.extended_views.CanvasView
 import ko.hyeonmin.cropshotfree.extended_views.GetPermissionButton
@@ -75,8 +75,8 @@ class CropShotActivity : Activity() {
     }
 
     fun openCamera() {
-        val cameraManager = cameraApi?.CameraManager(this)
-        val cameraId = cameraApi?.CameraCharacteristics(cameraManager!!)
+        val cameraManager = cameraApi?.CameraManager()
+        val cameraId = cameraApi?.CameraIdFromCharacteristics(cameraManager!!)
         cameraApi?.CameraDevice(cameraManager!!, cameraId!!)
     }
 
