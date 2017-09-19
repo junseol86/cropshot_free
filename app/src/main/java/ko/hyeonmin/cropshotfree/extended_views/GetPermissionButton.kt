@@ -17,8 +17,8 @@ class GetPermissionButton: View, View.OnTouchListener {
 
     private var button: RectF? = null
     private var buttonPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    var textPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    var buttonPressed = false
+    private var textPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private var buttonPressed = false
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
         this.setOnTouchListener(this)

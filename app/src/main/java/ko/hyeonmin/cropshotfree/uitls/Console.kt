@@ -16,7 +16,7 @@ class Console(activity: Activity) {
     val CROP_RATIO_MODE = 1
 
     var activity = activity as CropShotActivity
-    private var consoleCl: ConstraintLayout? = null
+    var consoleCl: ConstraintLayout? = null
     private  var cropDirectButton: ImageView? = null
     private  var cropRatioButton: ImageView? = null
     var sizerView: SizerView? = null

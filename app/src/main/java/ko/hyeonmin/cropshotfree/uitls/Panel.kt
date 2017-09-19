@@ -8,7 +8,7 @@ import ko.hyeonmin.cropshotfree.R
  * Created by Hyeonmin on 2017-09-10.
  */
 class Panel(activity: Activity) {
-    private var panelCl: ConstraintLayout? = null
+    var panelCl: ConstraintLayout? = null
     var active = true
 
     init {

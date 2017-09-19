@@ -170,14 +170,15 @@ class CanvasView: View, View.OnTouchListener {
 
                 when (activity?.console?.crop_mode) {
                     activity?.console?.CROP_DIRECT_MODE -> {
-                        cropXY[0] = Math.min(cropXY[0]!!, event.x)
-                        cropXY[1] = Math.min(cropXY[1]!!, event.y)
-                        cropXY[2] = Math.max(cropXY[2]!!, event.x)
-                        cropXY[3] = Math.max(cropXY[3]!!, event.y)
+                        cropXY[0] = Math.max(0f, Math.min(cropXY[0]!!, event.x))
+                        cropXY[1] = Math.max(0f, Math.min(cropXY[1]!!, event.y))
+                        cropXY[2] = Math.min(width.toFloat(), Math.max(cropXY[2]!!, event.x))
+                        cropXY[3] = Math.min(height.toFloat(), Math.max(cropXY[3]!!, event.y))
                     }
                     activity?.console?.CROP_RATIO_MODE -> {
-                        fromToXY[2] = event.x
-                        fromToXY[3] = event.y
+
+                        fromToXY[2] = if (event.x < 0) 0f else if (event.x > width) width.toFloat() else event.x
+                        fromToXY[3] = if (event.y < 0) 0f else if (event.y > height) height.toFloat() else event.y
 
                         if (Math.abs(fromToXY[0]!! - fromToXY[2]!!) > Math.abs(fromToXY[1]!! - fromToXY[3]!!)) {
                             ratioModeHorizontal = true
