@@ -13,6 +13,7 @@ import ko.hyeonmin.cropshotfree.extended_views.CanvasView
 import ko.hyeonmin.cropshotfree.extended_views.GetPermissionButton
 import ko.hyeonmin.cropshotfree.listeners.*
 import ko.hyeonmin.cropshotfree.uitls.*
+import ko.hyeonmin.cropshotfree.uitls.camera.TouchFocus
 
 class CropShotActivity : Activity() {
 
@@ -22,6 +23,8 @@ class CropShotActivity : Activity() {
     var panel: Panel? = null
     var canvasView: CanvasView? = null
     var screenCaptor = ScreenCaptor(this)
+
+    var mTouchFocus: TouchFocus? = null
 
     var getPermissionButton: GetPermissionButton? = null
 
@@ -35,6 +38,7 @@ class CropShotActivity : Activity() {
         console = Console(this)
         panel = Panel(this)
         canvasView = findViewById(R.id.canvasView) as CanvasView
+        mTouchFocus = TouchFocus(this)
 
         getPermissionButton = findViewById(R.id.getPermissionButton) as GetPermissionButton
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -44,7 +48,7 @@ class CropShotActivity : Activity() {
             if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 getPermissionButton?.visibility= View.VISIBLE
                 getPermissionButton?.setOnClickListener {
-                    requestPermissions(arrayOf(android.Manifest.permission.CAMERA), 0)
+                    requestPermissions(arrayOf(android.Manifest.permission.CAMERA), 1)
                 }
             } else {
                 cameraApi = CameraAPI(this)
@@ -56,9 +60,21 @@ class CropShotActivity : Activity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>?, grantResults: IntArray?) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 0) {
-            cameraApi = CameraAPI(this)
-            getPermissionButton?.visibility = View.GONE
+
+
+        when (requestCode) {
+            0 -> {
+                if (grantResults!![0] != PackageManager.PERMISSION_GRANTED) {
+                    finishAndRemoveTask()
+                    return
+                }
+            }
+            1 -> {
+                if (grantResults!![0] == PackageManager.PERMISSION_GRANTED) {
+                    cameraApi = CameraAPI(this)
+                    getPermissionButton?.visibility = View.GONE
+                }
+            }
         }
     }
 

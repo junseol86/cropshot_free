@@ -17,7 +17,7 @@ class CaptureCallback(cameraApi: CameraAPI): CameraCaptureSession.CaptureCallbac
     }
     override fun onCaptureCompleted(session: CameraCaptureSession, request: CaptureRequest, result: TotalCaptureResult) {
         super.onCaptureCompleted(session, request, result)
-        cameraApi.mTouchFocus.sendingFocusRequest = false
+        cameraApi.activity?.mTouchFocus?.sendingFocusRequest = false
 
         if (request.tag == "FOCUS") {
             cameraApi.mPreviewRequestBuilder?.set(CaptureRequest.CONTROL_AF_TRIGGER, null)

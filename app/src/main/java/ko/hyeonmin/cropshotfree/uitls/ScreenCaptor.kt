@@ -1,6 +1,7 @@
 package ko.hyeonmin.cropshotfree.uitls
 
 import android.graphics.Bitmap
+import android.media.MediaScannerConnection
 import android.os.Environment
 import android.text.format.DateFormat
 import ko.hyeonmin.cropshotfree.CropShotActivity
@@ -16,6 +17,10 @@ import kotlin.collections.HashMap
 class ScreenCaptor(activity: CropShotActivity) {
     val activity = activity
     var now: Date? = null
+    var directory = ""
+    var fileName = ""
+    var folder: File? = null
+    var createFolderSucess = false
     var imageFile: File? = null
     var fileOutputStream: FileOutputStream? = null
 
@@ -23,18 +28,35 @@ class ScreenCaptor(activity: CropShotActivity) {
         now = Date()
         DateFormat.format("yyyy-MM-dd_hh:mm:ss", now)
 
-        println("${cropXY[0]!!} ${cropXY[1]!!} ${cropXY[2]!!} ${cropXY[3]!!} ")
-        println("${cropXY[0]!!} ${cropXY[1]!!} ${cropXY[2]!!} ${cropXY[3]!!} ")
-        println("${cropXY[0]!!} ${cropXY[1]!!} ${cropXY[2]!!} ${cropXY[3]!!} ")
-
         val bitmap = Bitmap.createBitmap(activity.textureView!!.bitmap, cropXY[0]!!.toInt(), cropXY[1]!!.toInt() + activity.console!!.consoleCl!!.height, Math.abs(cropXY[0]!! - cropXY[2]!!).toInt(), Math.abs(cropXY[1]!! - cropXY[3]!!).toInt())
 
+        directory = Environment.getExternalStorageDirectory().toString() + "/cropshot"
+        folder = File(directory)
+        if (!folder!!.exists()) {
+            createFolderSucess = folder?.mkdir()!!
+            if (!createFolderSucess) {
+                return
+            }
+        }
+
+        directory += "/default"
+        folder = File(directory)
+        if (!folder!!.exists()) {
+            createFolderSucess = folder?.mkdir()!!
+            if (!createFolderSucess) {
+                return
+            }
+        }
+
+        fileName = "$directory/$now.png"
+
         try {
-            imageFile = File(Environment.getExternalStorageDirectory().toString() + "/data/" + now + ".png")
+            imageFile = File(fileName)
             fileOutputStream = FileOutputStream(imageFile)
             bitmap.compress(Bitmap.CompressFormat.PNG, 90, fileOutputStream)
             fileOutputStream?.flush()
             fileOutputStream?.close()
+            MediaScannerConnection.scanFile(activity, arrayOf(fileName), arrayOf("image/png"), null)
         } catch (e: Throwable) {
             e.printStackTrace()
         }

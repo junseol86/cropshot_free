@@ -1,14 +1,14 @@
 package ko.hyeonmin.cropshotfree.uitls.camera
 
+import android.hardware.camera2.CameraManager
+import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CaptureRequest
 import android.hardware.camera2.CameraDevice
 import android.hardware.camera2.CameraCaptureSession
-import android.util.Size
-import android.hardware.camera2.CameraManager
-import android.content.Context
 import android.hardware.camera2.CameraAccessException
+import android.util.Size
+import android.content.Context
 import android.graphics.SurfaceTexture
-import android.hardware.camera2.CameraCharacteristics
 import android.view.Surface
 import java.util.*
 import android.view.View
@@ -23,7 +23,7 @@ import ko.hyeonmin.cropshotfree.CropShotActivity
 
 class CameraAPI(activity: CropShotActivity) {
 
-    private var activity: CropShotActivity? = activity
+    var activity: CropShotActivity? = activity
 
     private var mCameraSize: Size? = null
 
@@ -32,8 +32,6 @@ class CameraAPI(activity: CropShotActivity) {
     var mCameraDevice: CameraDevice? = null
     var mPreviewRequestBuilder: CaptureRequest.Builder? = null
     var mCaptureCallback: CaptureCallback = CaptureCallback(this)
-
-    var mTouchFocus = TouchFocus(this)
 
     init {
         activity.canvasView?.visibility = View.VISIBLE
@@ -47,15 +45,17 @@ class CameraAPI(activity: CropShotActivity) {
         try {
             for (cameraId in cameraManager.cameraIdList) {
                 mCharacteristics = cameraManager.getCameraCharacteristics(cameraId)
-                if (mCharacteristics?.get(CameraCharacteristics.LENS_FACING) === CameraCharacteristics.LENS_FACING_BACK) {
+                if (mCharacteristics?.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_BACK) {
                     val map = mCharacteristics?.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
                     val sizes = map!!.getOutputSizes(SurfaceTexture::class.java)
 
                     mCameraSize = sizes[0]
+
                     sizes
                         .asSequence()
                         .filter { it.width > mCameraSize!!.width }
                         .forEach { mCameraSize = it }
+
                     return cameraId
                 }
             }
@@ -121,7 +121,8 @@ class CameraAPI(activity: CropShotActivity) {
 
     fun onCameraDeviceOpened() {
         val texture = activity?.textureView?.surfaceTexture
-        texture?.setDefaultBufferSize(mCameraSize!!.height, mCameraSize!!.width)
+        texture?.setDefaultBufferSize(Math.min(mCameraSize!!.width, mCameraSize!!.height), Math.max(mCameraSize!!.width, mCameraSize!!.height))
+
         val surface = Surface(texture)
 
         setCaptureSession(mCameraDevice!!, surface)

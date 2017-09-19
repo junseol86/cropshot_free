@@ -6,13 +6,14 @@ import android.hardware.camera2.CameraMetadata
 import android.hardware.camera2.CaptureRequest
 import android.hardware.camera2.params.MeteringRectangle
 import android.view.View
+import ko.hyeonmin.cropshotfree.CropShotActivity
 
 /**
  * Created by junse on 2017-09-17.
  */
-class TouchFocus(cameraAPI: CameraAPI) {
+class TouchFocus(activity: CropShotActivity) {
 
-    private val cameraApi = cameraAPI
+    var activity = activity
     var sensorArraySize: Rect? = null
     var sensorW = 0
     var sensorH = 0
@@ -34,10 +35,10 @@ class TouchFocus(cameraAPI: CameraAPI) {
         if (sendingFocusRequest) return
 
         if (sensorArraySize == null) {
-            sensorArraySize = cameraApi.mCharacteristics?.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE)
+            sensorArraySize = activity.cameraApi!!.mCharacteristics?.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE)
 //            반대로 되는 것이 맞다
-            sensorW = sensorArraySize!!.height()
-            sensorH = sensorArraySize!!.width()
+            sensorW = Math.min(sensorArraySize!!.width(), sensorArraySize!!.height())
+            sensorH = Math.max(sensorArraySize!!.width(), sensorArraySize!!.height())
 
             if (view.width.toFloat() / view.height.toFloat() > sensorW.toFloat() / sensorH.toFloat()) {
                 availableXY[0] = 0
@@ -56,20 +57,20 @@ class TouchFocus(cameraAPI: CameraAPI) {
 
         focusXY = MeteringRectangle(availableXY[0]!! + cropXY[0]!!, availableXY[1]!! + cropXY[1]!!, availableXY[2]!! + cropXY[2]!!, availableXY[3]!! + cropXY[3]!!, MeteringRectangle.METERING_WEIGHT_MAX - 1)
 
-        cameraApi.mCaptureSession?.stopRepeating()
-        cameraApi.mPreviewRequestBuilder?.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_CANCEL)
-        cameraApi.mPreviewRequestBuilder?.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF)
-        cameraApi.mCaptureSession?.capture(cameraApi.mPreviewRequestBuilder!!.build(), cameraApi.mCaptureCallback, null)
+        activity.cameraApi!!.mCaptureSession?.stopRepeating()
+        activity.cameraApi!!.mPreviewRequestBuilder?.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_CANCEL)
+        activity.cameraApi!!.mPreviewRequestBuilder?.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF)
+        activity.cameraApi!!.mCaptureSession?.capture(activity.cameraApi!!.mPreviewRequestBuilder!!.build(), activity.cameraApi!!.mCaptureCallback, null)
 
-        if (cameraApi.mCharacteristics!!.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AF) >= 1) {
-            cameraApi.mPreviewRequestBuilder?.set(CaptureRequest.CONTROL_AF_REGIONS, arrayOf(focusXY))
+        if (activity.cameraApi!!.mCharacteristics!!.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AF) >= 1) {
+            activity.cameraApi!!.mPreviewRequestBuilder?.set(CaptureRequest.CONTROL_AF_REGIONS, arrayOf(focusXY))
         }
 
-        cameraApi.mPreviewRequestBuilder?.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO)
-        cameraApi.mPreviewRequestBuilder?.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO)
-        cameraApi.mPreviewRequestBuilder?.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_START)
-        cameraApi.mPreviewRequestBuilder?.setTag("FOCUS")
-        cameraApi.mCaptureSession?.capture(cameraApi.mPreviewRequestBuilder!!.build(), cameraApi.mCaptureCallback, null)
+        activity.cameraApi!!.mPreviewRequestBuilder?.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO)
+        activity.cameraApi!!.mPreviewRequestBuilder?.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO)
+        activity.cameraApi!!.mPreviewRequestBuilder?.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_START)
+        activity.cameraApi!!.mPreviewRequestBuilder?.setTag("FOCUS")
+        activity.cameraApi!!.mCaptureSession?.capture(activity.cameraApi!!.mPreviewRequestBuilder!!.build(), activity.cameraApi!!.mCaptureCallback, null)
         sendingFocusRequest = true
     }
 
