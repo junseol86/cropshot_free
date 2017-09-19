@@ -121,7 +121,7 @@ class CameraAPI(activity: CropShotActivity) {
 
     fun onCameraDeviceOpened() {
         val texture = activity?.textureView?.surfaceTexture
-        texture?.setDefaultBufferSize(Math.min(mCameraSize!!.width, mCameraSize!!.height), Math.max(mCameraSize!!.width, mCameraSize!!.height))
+        texture?.setDefaultBufferSize(Math.max(mCameraSize!!.width, mCameraSize!!.height), Math.min(mCameraSize!!.width, mCameraSize!!.height))
 
         val surface = Surface(texture)
 

@@ -28,7 +28,7 @@ class ScreenCaptor(activity: CropShotActivity) {
         now = Date()
         DateFormat.format("yyyy-MM-dd_hh:mm:ss", now)
 
-        val bitmap = Bitmap.createBitmap(activity.textureView!!.bitmap, cropXY[0]!!.toInt(), cropXY[1]!!.toInt() + activity.console!!.consoleCl!!.height, Math.abs(cropXY[0]!! - cropXY[2]!!).toInt(), Math.abs(cropXY[1]!! - cropXY[3]!!).toInt())
+        val bitmap = Bitmap.createBitmap(activity.textureView!!.bitmap, cropXY[0]!!.toInt(), cropXY[1]!!.toInt(), Math.abs(cropXY[0]!! - cropXY[2]!!).toInt(), Math.abs(cropXY[1]!! - cropXY[3]!!).toInt())
 
         directory = Environment.getExternalStorageDirectory().toString() + "/cropshot"
         folder = File(directory)
