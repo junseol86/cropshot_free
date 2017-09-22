@@ -17,6 +17,8 @@ import ko.hyeonmin.cropshotfree.uitls.camera.TouchFocus
 
 class CropShotActivity : Activity() {
 
+    var caches: Caches? = null
+
     var cameraApi: CameraAPI? = null
     var textureView: TextureView? = null
     var console: Console? = null
@@ -25,13 +27,15 @@ class CropShotActivity : Activity() {
     var screenCaptor = ScreenCaptor(this)
 
     var mTouchFocus: TouchFocus? = null
-
     var getPermissionButton: GetPermissionButton? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_crop_shot)
+
+        caches = Caches(this)
 
         textureView = findViewById(R.id.textureView) as TextureView
         textureView?.surfaceTextureListener = MySurfaceTextureListener(this)
@@ -39,6 +43,7 @@ class CropShotActivity : Activity() {
         panel = Panel(this)
         canvasView = findViewById(R.id.canvasView) as CanvasView
         mTouchFocus = TouchFocus(this)
+
 
         getPermissionButton = findViewById(R.id.getPermissionButton) as GetPermissionButton
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

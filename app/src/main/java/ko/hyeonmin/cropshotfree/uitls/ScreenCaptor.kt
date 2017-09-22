@@ -40,7 +40,7 @@ class ScreenCaptor(activity: CropShotActivity) {
             }
         }
 
-        directory += "/default"
+        directory += "/${activity.caches!!.folderName}"
         folder = File(directory)
         if (!folder!!.exists()) {
             createFolderSucess = folder?.mkdir()!!
