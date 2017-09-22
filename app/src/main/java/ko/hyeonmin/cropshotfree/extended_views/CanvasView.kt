@@ -151,17 +151,17 @@ class CanvasView: View, View.OnTouchListener {
                 activity?.console?.active = false
                 activity?.panel?.active = false
 
+                fromToXY[0] = event.x
+                fromToXY[1] = event.y
+                fromToXY[2] = event.x
+                fromToXY[3] = event.y
+
                 when (activity?.console?.crop_mode) {
                     activity?.console?.CROP_DIRECT_MODE -> {
                         cropXY[0] = event.x
                         cropXY[1] = event.y
                         cropXY[2] = event.x
                         cropXY[3] = event.y
-                    }
-                    activity?.console?.CROP_RATIO_MODE -> {
-
-                        fromToXY[0] = event.x
-                        fromToXY[1] = event.y
                     }
                 }
                 touching = true
@@ -205,7 +205,11 @@ class CanvasView: View, View.OnTouchListener {
                 touching = false
                 invalidate()
 
-                activity?.screenCaptor?.takeScreenShot(cropXY)
+                if (Math.abs(fromToXY[0]!! - event.x) < 20 || Math.abs(fromToXY[1]!! - event.y) < 20) {
+                    activity?.screenCaptor?.takeScreenShot(cropXY, false)
+                } else {
+                    activity?.screenCaptor?.takeScreenShot(cropXY, true)
+                }
             }
         }
         return true

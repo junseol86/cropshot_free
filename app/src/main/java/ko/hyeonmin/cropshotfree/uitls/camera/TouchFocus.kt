@@ -33,13 +33,6 @@ class TouchFocus(activity: CropShotActivity) {
 
         if (sendingFocusRequest) return
 
-//        if (sensorArraySize == null) {
-//            sensorArraySize = activity.cameraApi!!.mCharacteristics?.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE)
-////            반대로 되는 것이 맞다
-//            sensorW = Math.min(sensorArraySize!!.width(), sensorArraySize!!.height())
-//            sensorH = Math.max(sensorArraySize!!.width(), sensorArraySize!!.height())
-//        }
-
         focusXY = MeteringRectangle(cropXY[0]!!, cropXY[1]!!, cropXY[2]!!, cropXY[3]!!, MeteringRectangle.METERING_WEIGHT_MAX - 1)
 
         activity.cameraApi!!.mCaptureSession?.stopRepeating()

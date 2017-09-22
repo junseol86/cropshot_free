@@ -49,7 +49,7 @@ class CameraAPI(activity: CropShotActivity) {
                     val map = mCharacteristics?.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
                     val sizes = map!!.getOutputSizes(SurfaceTexture::class.java)
 
-                    mCameraSize = sizes[0]
+                    mCameraSize = if (sizes[0]!!.width <= 1920) sizes[0] else Size(1920, (sizes[0]!!.height * 1920f / sizes[0]!!.width).toInt())
 
                     sizes
                         .asSequence()
