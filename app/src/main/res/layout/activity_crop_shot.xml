@@ -78,6 +78,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:background="@color/darkGray"
+        android:clickable="true"
         >
         <android.support.constraint.ConstraintLayout
             android:layout_width="0dp"
