@@ -1,7 +1,7 @@
 package ko.hyeonmin.cropshotfree.listeners
 
 import android.view.TextureView
-import ko.hyeonmin.cropshotfree.CropShotActivity
+import ko.hyeonmin.cropshotfree.activities.CropShotActivity
 
 /**
  * Created by Hyeonmin on 2017-09-10.

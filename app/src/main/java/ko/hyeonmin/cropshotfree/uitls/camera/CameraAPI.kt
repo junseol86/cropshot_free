@@ -12,7 +12,7 @@ import android.graphics.SurfaceTexture
 import android.view.Surface
 import java.util.*
 import android.view.View
-import ko.hyeonmin.cropshotfree.CropShotActivity
+import ko.hyeonmin.cropshotfree.activities.CropShotActivity
 
 
 /**

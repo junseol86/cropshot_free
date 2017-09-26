@@ -3,7 +3,7 @@ package ko.hyeonmin.cropshotfree.uitls
 import android.app.Activity
 import android.support.constraint.ConstraintLayout
 import android.widget.ImageView
-import ko.hyeonmin.cropshotfree.CropShotActivity
+import ko.hyeonmin.cropshotfree.activities.CropShotActivity
 import ko.hyeonmin.cropshotfree.R
 import ko.hyeonmin.cropshotfree.extended_views.SizerView
 

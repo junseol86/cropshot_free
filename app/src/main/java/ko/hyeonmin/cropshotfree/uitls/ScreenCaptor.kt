@@ -4,10 +4,9 @@ import android.graphics.Bitmap
 import android.media.MediaScannerConnection
 import android.os.Environment
 import android.text.format.DateFormat
-import ko.hyeonmin.cropshotfree.CropShotActivity
+import ko.hyeonmin.cropshotfree.activities.CropShotActivity
 import java.io.File
 import java.io.FileOutputStream
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
 

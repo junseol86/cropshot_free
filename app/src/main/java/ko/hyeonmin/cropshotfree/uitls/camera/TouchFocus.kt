@@ -6,7 +6,7 @@ import android.hardware.camera2.CameraMetadata
 import android.hardware.camera2.CaptureRequest
 import android.hardware.camera2.params.MeteringRectangle
 import android.view.View
-import ko.hyeonmin.cropshotfree.CropShotActivity
+import ko.hyeonmin.cropshotfree.activities.CropShotActivity
 
 /**
  * Created by junse on 2017-09-17.

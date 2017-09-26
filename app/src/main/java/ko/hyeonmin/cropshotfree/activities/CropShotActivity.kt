@@ -1,4 +1,4 @@
-package ko.hyeonmin.cropshotfree
+package ko.hyeonmin.cropshotfree.activities
 
 import android.Manifest
 import android.app.Activity
@@ -8,9 +8,8 @@ import android.os.Bundle
 import android.view.TextureView
 import android.view.Window
 import ko.hyeonmin.cropshotfree.uitls.camera.CameraAPI
-import android.view.View
+import ko.hyeonmin.cropshotfree.R
 import ko.hyeonmin.cropshotfree.extended_views.CanvasView
-import ko.hyeonmin.cropshotfree.extended_views.GetPermissionButton
 import ko.hyeonmin.cropshotfree.listeners.*
 import ko.hyeonmin.cropshotfree.uitls.*
 import ko.hyeonmin.cropshotfree.uitls.camera.TouchFocus
@@ -27,7 +26,6 @@ class CropShotActivity : Activity() {
     var screenCaptor = ScreenCaptor(this)
 
     var mTouchFocus: TouchFocus? = null
-    var getPermissionButton: GetPermissionButton? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,17 +42,16 @@ class CropShotActivity : Activity() {
         canvasView = findViewById(R.id.canvasView) as CanvasView
         mTouchFocus = TouchFocus(this)
 
+        getPermissionsAndCameraOn()
+    }
 
-        getPermissionButton = findViewById(R.id.getPermissionButton) as GetPermissionButton
+    private fun getPermissionsAndCameraOn() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), 0)
             }
             if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                getPermissionButton?.visibility= View.VISIBLE
-                getPermissionButton?.setOnClickListener {
-                    requestPermissions(arrayOf(android.Manifest.permission.CAMERA), 1)
-                }
+                requestPermissions(arrayOf(android.Manifest.permission.CAMERA), 1)
             } else {
                 cameraApi = CameraAPI(this)
             }
@@ -66,21 +63,19 @@ class CropShotActivity : Activity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>?, grantResults: IntArray?) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-
+        if (grantResults!!.isEmpty()) return
+        if (grantResults!![0] != PackageManager.PERMISSION_GRANTED) {
+            finishAndRemoveTask()
+            return
+        }
         when (requestCode) {
-            0 -> {
-                if (grantResults!![0] != PackageManager.PERMISSION_GRANTED) {
-                    finishAndRemoveTask()
-                    return
-                }
-            }
             1 -> {
                 if (grantResults!![0] == PackageManager.PERMISSION_GRANTED) {
                     cameraApi = CameraAPI(this)
-                    getPermissionButton?.visibility = View.GONE
                 }
             }
         }
+        getPermissionsAndCameraOn()
     }
 
     override fun onResume() {

@@ -1,13 +1,13 @@
 package ko.hyeonmin.cropshotfree.uitls
 
+import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
-import ko.hyeonmin.cropshotfree.CropShotActivity
 
 /**
  * Created by junse on 2017-09-22.
  */
-class Caches(activity: CropShotActivity) {
+class Caches(activity: Activity) {
     var sharedPrefs : SharedPreferences = activity.getSharedPreferences("account", Context.MODE_PRIVATE)
 
     var folderName: String

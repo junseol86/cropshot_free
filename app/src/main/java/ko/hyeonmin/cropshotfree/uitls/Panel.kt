@@ -1,16 +1,21 @@
 package ko.hyeonmin.cropshotfree.uitls
 
+import android.content.Intent
 import android.graphics.Color
+import android.os.Environment
 import android.support.constraint.ConstraintLayout
+import android.support.v4.content.FileProvider
 import android.view.MotionEvent
 import android.widget.TextView
-import ko.hyeonmin.cropshotfree.CropShotActivity
+import ko.hyeonmin.cropshotfree.activities.CropShotActivity
 import ko.hyeonmin.cropshotfree.R
+import ko.hyeonmin.cropshotfree.activities.GalleryActivity
 import java.io.File
 
 /**
  * Created by Hyeonmin on 2017-09-10.
  */
+
 class Panel(activity: CropShotActivity) {
     var panelCl: ConstraintLayout? = null
     var active = true
@@ -30,6 +35,16 @@ class Panel(activity: CropShotActivity) {
                 }
                 MotionEvent.ACTION_UP -> {
                     panelCl?.setBackgroundColor(Color.parseColor("#111111"))
+
+//                    val intent = Intent()
+//                    intent.action = Intent.ACTION_VIEW
+//                    intent.setDataAndType(FileProvider.getUriForFile(
+//                            activity,
+//                            "ko.hyeonmin.cropshotfree.provider",
+//                            File(Environment.getExternalStorageDirectory().toString() + "/cropshot/${activity.caches!!.folderName}/")),
+//                            "image/*")
+//                    activity.startActivity(intent)
+                    activity.startActivity(Intent(activity, GalleryActivity::class.java))
                 }
             }
             false
