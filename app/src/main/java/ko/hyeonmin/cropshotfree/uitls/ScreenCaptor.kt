@@ -25,7 +25,7 @@ class ScreenCaptor(activity: CropShotActivity) {
 
     fun takeScreenShot(cropXY: HashMap<Int, Float>, crop: Boolean) {
         now = Date()
-        DateFormat.format("yyyy-MM-dd_hh:mm:ss", now)
+
 
         val bitmap = if (crop) Bitmap.createBitmap(activity.textureView!!.bitmap, cropXY[0]!!.toInt(), cropXY[1]!!.toInt(), Math.abs(cropXY[0]!! - cropXY[2]!!).toInt(), Math.abs(cropXY[1]!! - cropXY[3]!!).toInt())
                         else Bitmap.createBitmap(activity.textureView!!.bitmap)
@@ -48,7 +48,7 @@ class ScreenCaptor(activity: CropShotActivity) {
             }
         }
 
-        fileName = "$directory/$now.png"
+        fileName = "$directory/${DateFormat.format("yyyy-MM-dd-hh-mm-ss", now)}.png"
 
         try {
             imageFile = File(fileName)

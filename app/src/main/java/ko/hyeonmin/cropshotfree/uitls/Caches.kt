@@ -15,4 +15,10 @@ class Caches(activity: Activity) {
         set(string) {
             sharedPrefs.edit().putString("folder_name", string).commit()
         }
+
+    var proVersion: Int
+        get() = sharedPrefs.getInt("pro_version", -1)
+        set(int) {
+            sharedPrefs.edit().putInt("pro_version", int).commit()
+        }
 }

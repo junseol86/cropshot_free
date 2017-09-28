@@ -33,7 +33,7 @@ class Console(activity: Activity) {
             setCropMode(CROP_RATIO_MODE)
             this.activity.canvasView?.setRatioModeShade()
         }
-        sizerView = activity?.findViewById(R.id.sizerView) as SizerView
+        sizerView = activity.findViewById(R.id.sizerView) as SizerView
     }
 
     private fun setCropMode(mode: Int):Boolean {

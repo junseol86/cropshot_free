@@ -33,6 +33,8 @@ class CropShotActivity : Activity() {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_crop_shot)
 
+        VersionCheck(this).sendVersionCheckRequest()
+
         caches = Caches(this)
 
         textureView = findViewById(R.id.textureView) as TextureView
@@ -47,11 +49,11 @@ class CropShotActivity : Activity() {
 
     private fun getPermissionsAndCameraOn() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), 0)
-            }
-            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(arrayOf(android.Manifest.permission.CAMERA), 1)
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                requestPermissions(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.INTERNET, android.Manifest.permission.CAMERA), 0)
             } else {
                 cameraApi = CameraAPI(this)
             }
@@ -63,17 +65,19 @@ class CropShotActivity : Activity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>?, grantResults: IntArray?) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        if (grantResults!!.isEmpty()) return
         if (grantResults!![0] != PackageManager.PERMISSION_GRANTED) {
             finishAndRemoveTask()
             return
         }
-        when (requestCode) {
-            1 -> {
-                if (grantResults!![0] == PackageManager.PERMISSION_GRANTED) {
-                    cameraApi = CameraAPI(this)
-                }
-            }
+        if (grantResults[1] != PackageManager.PERMISSION_GRANTED) {
+            finishAndRemoveTask()
+            return
+        }
+        if (grantResults[2] != PackageManager.PERMISSION_GRANTED) {
+            finishAndRemoveTask()
+            return
+        } else {
+            cameraApi = CameraAPI(this)
         }
         getPermissionsAndCameraOn()
     }

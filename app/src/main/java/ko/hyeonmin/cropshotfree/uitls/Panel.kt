@@ -1,5 +1,7 @@
 package ko.hyeonmin.cropshotfree.uitls
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.os.Environment
@@ -22,6 +24,10 @@ class Panel(activity: CropShotActivity) {
 
     var folderNameTV: TextView? = null
 
+    var directory = ""
+    var folder: File? = null
+    var createFolderSucess = false
+
     init {
         this.panelCl = activity.findViewById(R.id.panel) as ConstraintLayout
 
@@ -36,15 +42,17 @@ class Panel(activity: CropShotActivity) {
                 MotionEvent.ACTION_UP -> {
                     panelCl?.setBackgroundColor(Color.parseColor("#111111"))
 
-//                    val intent = Intent()
-//                    intent.action = Intent.ACTION_VIEW
-//                    intent.setDataAndType(FileProvider.getUriForFile(
-//                            activity,
-//                            "ko.hyeonmin.cropshotfree.provider",
-//                            File(Environment.getExternalStorageDirectory().toString() + "/cropshot/${activity.caches!!.folderName}/")),
-//                            "image/*")
-//                    activity.startActivity(intent)
-                    activity.startActivity(Intent(activity, GalleryActivity::class.java))
+                    if (!File(Environment.getExternalStorageDirectory().toString() + "/cropshot").exists() ||
+                            !File(Environment.getExternalStorageDirectory().toString() + "/cropshot/${activity.caches!!.folderName}").exists() ||
+                            File(Environment.getExternalStorageDirectory().toString() + "/cropshot/${activity.caches!!.folderName}").listFiles().isEmpty()
+                            ) {
+                        AlertDialog.Builder(activity).setTitle(activity.resources.getString(R.string.empty_folder))
+                                .setCancelable(true)
+                                .setPositiveButton(activity.resources.getText(R.string.ok)) { _, _ ->  }
+                                .show()
+                    } else {
+                        activity.startActivity(Intent(activity, GalleryActivity::class.java))
+                    }
                 }
             }
             false

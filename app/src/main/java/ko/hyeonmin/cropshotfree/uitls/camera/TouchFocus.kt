@@ -5,7 +5,6 @@ import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraMetadata
 import android.hardware.camera2.CaptureRequest
 import android.hardware.camera2.params.MeteringRectangle
-import android.view.View
 import ko.hyeonmin.cropshotfree.activities.CropShotActivity
 
 /**
@@ -23,7 +22,7 @@ class TouchFocus(activity: CropShotActivity) {
 
     private val SENSIBILITY = 15
 
-    fun focusRequest(cropXY: HashMap<Int, Int>, view: View) {
+    fun focusRequest(cropXY: HashMap<Int, Int>) {
         if (
         !(Math.pow(Math.pow((cropXY[0]!! - lastCropXY[0]!!).toDouble(), 2.0) + Math.pow((cropXY[1]!! - lastCropXY[1]!!).toDouble(), 2.0), 0.5) > SENSIBILITY ||
             Math.pow(Math.pow((cropXY[2]!! - lastCropXY[2]!!).toDouble(), 2.0) + Math.pow((cropXY[3]!! - lastCropXY[3]!!).toDouble(), 2.0), 0.5) > SENSIBILITY)
