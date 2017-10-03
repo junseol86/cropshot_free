@@ -3,4 +3,9 @@
     <string name="activate_camera">Activate Camera</string>
     <string name="empty_folder">EMPTY FOLDER</string>
     <string name="ok">OK</string>
+    <string name="remove_a_photo">Do you want to remove this photo?</string>
+    <string name="remove_photos">Do you want to remove selected photos?</string>
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
+    <string name="remove_failed">Error - Failed to remove</string>
 </resources>

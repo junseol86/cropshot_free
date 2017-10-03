@@ -24,6 +24,7 @@ class VersionCheck(val activity: CropShotActivity) {
                     val currentVersion = activity.packageManager.getPackageInfo(activity.packageName, 0).versionCode
                     if (Integer.parseInt(jo["free_version"].toString()) > currentVersion) {
                         activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(jo["free_url"].toString())))
+                        activity.finishAndRemoveTask()
                     }
                 },
                 Response.ErrorListener {

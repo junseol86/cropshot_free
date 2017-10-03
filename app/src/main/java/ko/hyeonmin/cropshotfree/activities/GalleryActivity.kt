@@ -14,15 +14,18 @@ import ko.hyeonmin.cropshotfree.gallery_utils.GalleryPagerAdapter
 import ko.hyeonmin.cropshotfree.gallery_utils.GalleryRecyclerAdapter
 import ko.hyeonmin.cropshotfree.gallery_utils.GalleryViewHolder
 import ko.hyeonmin.cropshotfree.uitls.Caches
+import ko.hyeonmin.cropshotfree.uitls.GalleryTopbar
 import java.io.File
 
 class GalleryActivity : Activity() {
 
     var caches: Caches? = null
 
+    var galleryTopbar: GalleryTopbar? = null
+
     var galleryRv: RecyclerView? = null
     var galleryLm: RecyclerView.LayoutManager? = null
-    var galleryRecyclerAdapter: RecyclerView.Adapter<GalleryViewHolder>? = null
+    var galleryRecyclerAdapter: GalleryRecyclerAdapter? = null
 
     var galleryVp: ViewPager? = null
     var galleryPagerAdapter: GalleryPagerAdapter? = null
@@ -34,6 +37,8 @@ class GalleryActivity : Activity() {
         setContentView(R.layout.activity_gallery)
 
         caches = Caches(this)
+
+        galleryTopbar = GalleryTopbar(this)
 
         galleryRv = findViewById(R.id.galleryRv) as RecyclerView
         galleryRv?.setHasFixedSize(true)

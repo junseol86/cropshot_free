@@ -22,25 +22,25 @@ class Panel(activity: CropShotActivity) {
     var panelCl: ConstraintLayout? = null
     var active = true
 
+    var folderBtnCl: ConstraintLayout? = null
     var folderNameTV: TextView? = null
-
     var directory = ""
     var folder: File? = null
     var createFolderSucess = false
 
     init {
-        this.panelCl = activity.findViewById(R.id.panel) as ConstraintLayout
-
-        folderNameTV = activity.findViewById(R.id.folder_name) as TextView
+        panelCl = activity.findViewById(R.id.panel) as ConstraintLayout
+        folderBtnCl = activity.findViewById(R.id.folderButtonCl) as ConstraintLayout
+        folderNameTV = activity.findViewById(R.id.folderName) as TextView
         folderNameTV?.text = activity.caches!!.folderName
 
-        panelCl?.setOnTouchListener { _, event ->
+        folderBtnCl?.setOnTouchListener { _, event ->
             when (event!!.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    panelCl?.setBackgroundColor(Color.parseColor("#333333"))
+                    folderBtnCl?.setBackgroundColor(Color.parseColor("#222222"))
                 }
                 MotionEvent.ACTION_UP -> {
-                    panelCl?.setBackgroundColor(Color.parseColor("#111111"))
+                    folderBtnCl?.setBackgroundColor(Color.parseColor("#111111"))
 
                     if (!File(Environment.getExternalStorageDirectory().toString() + "/cropshot").exists() ||
                             !File(Environment.getExternalStorageDirectory().toString() + "/cropshot/${activity.caches!!.folderName}").exists() ||

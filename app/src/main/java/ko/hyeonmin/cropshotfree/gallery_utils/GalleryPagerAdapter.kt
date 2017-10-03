@@ -53,4 +53,8 @@ class GalleryPagerAdapter(val activity: GalleryActivity): PagerAdapter() {
     override fun getCount(): Int {
         return activity.list.size
     }
+
+    override fun getItemPosition(`object`: Any?): Int {
+        return POSITION_NONE
+    }
 }

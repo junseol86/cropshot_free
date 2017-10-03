@@ -1,15 +1,12 @@
 package ko.hyeonmin.cropshotfree.gallery_utils
 
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.support.v4.content.FileProvider
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import ko.hyeonmin.cropshotfree.R
 import ko.hyeonmin.cropshotfree.activities.GalleryActivity
-import java.io.File
 
 /**
  * Created by junse on 2017-09-26.
@@ -46,10 +43,10 @@ class GalleryRecyclerAdapter(activity: GalleryActivity, list: ArrayList<String>)
                 orgBitmap = Bitmap.createBitmap(orgBitmap, 0, ((orgBitmap!!.height - cropSize) / 2).toInt(), orgBitmap!!.width, cropSize.toInt())
             }
 
-            if (orgBitmap!!.width > itemWidth) {
-                itemBitmap = Bitmap.createScaledBitmap(orgBitmap, itemWidth, orgBitmap!!.height * itemWidth / orgBitmap!!.width, true)
+            itemBitmap = if (orgBitmap!!.width > itemWidth) {
+                Bitmap.createScaledBitmap(orgBitmap, itemWidth, orgBitmap!!.height * itemWidth / orgBitmap!!.width, true)
             } else {
-                itemBitmap = orgBitmap
+                orgBitmap
             }
 
             bitmapMap.put(position, itemBitmap!!)
