@@ -25,7 +25,7 @@ class CameraAPI(activity: CropShotActivity) {
 
     var activity: CropShotActivity? = activity
 
-    private var mCameraSize: Size? = null
+    var mCameraSize: Size? = null
 
     var mCharacteristics: CameraCharacteristics? = null
     var mCaptureSession: CameraCaptureSession? = null
@@ -50,6 +50,7 @@ class CameraAPI(activity: CropShotActivity) {
                     val sizes = map!!.getOutputSizes(SurfaceTexture::class.java)
 
                     mCameraSize = if (sizes[0]!!.width <= 1920) sizes[0] else Size(1920, (sizes[0]!!.height * 1920f / sizes[0]!!.width).toInt())
+//                    mCameraSize = sizes[0]
 
                     sizes
                         .asSequence()

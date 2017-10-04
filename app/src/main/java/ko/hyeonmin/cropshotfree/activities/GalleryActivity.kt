@@ -32,6 +32,8 @@ class GalleryActivity : Activity() {
 
     var list = ArrayList<String>()
 
+    var selectOn = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_gallery)
@@ -58,28 +60,40 @@ class GalleryActivity : Activity() {
     }
 
     fun pickAnImage(position: Int) {
-        galleryVp?.visibility = View.VISIBLE
+        setPagerOnOff(true)
         galleryVp?.currentItem = position
     }
+
+    fun setPagerOnOff(onOff: Boolean) {
+        galleryVp?.visibility = if (onOff) View.VISIBLE else View.GONE
+        galleryTopbar?.removeBtnRl?.visibility = if (onOff) View.VISIBLE else View.GONE
+    }
+
+    fun setSelectOnOff(onOff: Boolean) {
+        selectOn = onOff
+        galleryRecyclerAdapter?.selectedList?.removeAll(galleryRecyclerAdapter!!.selectedList)
+        galleryTopbar?.removeBtnRl?.visibility = if (onOff) View.VISIBLE else View.GONE
+        galleryRecyclerAdapter?.notifyDataSetChanged()
+    }
+
+    fun isPagerOn(): Boolean = galleryVp!!.visibility == View.VISIBLE
 
     private fun getListFiles(parentDir: File): ArrayList<String> {
         val inFiles = ArrayList<String>()
         val files = parentDir.listFiles()
-        for (i in files.size - 1 downTo 0) {
-            if (files[i].isDirectory) {
-                continue
-            } else {
-                if (files[i].name.endsWith(".png")) {
-                    inFiles.add(files[i].absolutePath)
-                }
-            }
-        }
+        (files.size - 1 downTo 0)
+                .filter { !files[it].isDirectory && files[it].name.endsWith(".png") }
+                .mapTo(inFiles) { files[it].absolutePath }
         return inFiles
     }
 
     override fun onBackPressed() {
-        if (galleryVp!!.visibility == View.VISIBLE) {
-            galleryVp!!.visibility = View.GONE
+        if (isPagerOn()) {
+            setPagerOnOff(false)
+            return
+        }
+        if (selectOn) {
+            setSelectOnOff(false)
             return
         }
         super.onBackPressed()

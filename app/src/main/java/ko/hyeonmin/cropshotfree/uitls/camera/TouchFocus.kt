@@ -13,9 +13,11 @@ import ko.hyeonmin.cropshotfree.activities.CropShotActivity
 class TouchFocus(activity: CropShotActivity) {
 
     var activity = activity
-    var sensorArraySize: Rect? = null
-//    var sensorW = 0
-//    var sensorH = 0
+
+    var sizeRatio = 0f
+    var offsetX = 0
+    var offsetY = 0
+
     private var focusXY: MeteringRectangle? = null
     private var lastCropXY = hashMapOf(0 to 0, 1 to 0, 2 to 0, 3 to 0)
     var sendingFocusRequest = false
@@ -32,7 +34,16 @@ class TouchFocus(activity: CropShotActivity) {
 
         if (sendingFocusRequest) return
 
-        focusXY = MeteringRectangle(cropXY[0]!!, cropXY[1]!!, cropXY[2]!!, cropXY[3]!!, MeteringRectangle.METERING_WEIGHT_MAX - 1)
+        if (activity.cameraApi!!.mCameraSize!!.width / activity.cameraApi!!.mCameraSize!!.height.toFloat() > activity.canvasView!!.width / activity.canvasView!!.height.toFloat()) {
+            sizeRatio = activity.cameraApi!!.mCameraSize!!.height / activity.canvasView!!.height.toFloat()
+            offsetX = ((activity.cameraApi!!.mCameraSize!!.width - activity.canvasView!!.width * sizeRatio) / 2).toInt()
+        } else {
+            sizeRatio = activity.cameraApi!!.mCameraSize!!.width / activity.canvasView!!.width.toFloat()
+            offsetY = ((activity.cameraApi!!.mCameraSize!!.height - activity.canvasView!!.height * sizeRatio) / 2).toInt()
+        }
+
+        focusXY = MeteringRectangle((offsetX + cropXY[0]!! * sizeRatio).toInt(), (offsetY + cropXY[1]!! * sizeRatio).toInt(),
+                (Math.abs(cropXY[0]!! - cropXY[2]!!) * sizeRatio).toInt(), (Math.abs(cropXY[1]!! - cropXY[3]!!) * sizeRatio).toInt(), MeteringRectangle.METERING_WEIGHT_MAX - 1)
 
         activity.cameraApi!!.mCaptureSession?.stopRepeating()
         activity.cameraApi!!.mPreviewRequestBuilder?.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_CANCEL)

@@ -8,4 +8,6 @@
     <string name="yes">YES</string>
     <string name="no">NO</string>
     <string name="remove_failed">Error - Failed to remove</string>
+    <string name="new_version_available">New version available</string>
+    <string name="ask_update">Do you want download new version?</string>
 </resources>

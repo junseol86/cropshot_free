@@ -2,6 +2,7 @@ package ko.hyeonmin.cropshotfree.uitls
 
 import android.app.Activity
 import android.support.constraint.ConstraintLayout
+import android.view.View
 import android.widget.ImageView
 import ko.hyeonmin.cropshotfree.activities.CropShotActivity
 import ko.hyeonmin.cropshotfree.R
@@ -40,7 +41,7 @@ class Console(activity: Activity) {
         this.crop_mode = mode
         cropDirectButton?.alpha = if (crop_mode == CROP_DIRECT_MODE) 1f else 0.2f
         cropRatioButton?.alpha = if (crop_mode == CROP_RATIO_MODE) 1f else 0.2f
-        sizerView?.alpha = if(crop_mode == CROP_RATIO_MODE) 1f else 0.2f
+        sizerView?.visibility = if (crop_mode == CROP_RATIO_MODE) View.VISIBLE else View.GONE
         activity.canvasView?.invalidate()
         return true
     }

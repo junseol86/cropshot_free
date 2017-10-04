@@ -8,6 +8,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:minHeight="52dp"
         android:layout_margin="4dp"
         >
         <ImageView
@@ -17,5 +18,15 @@
             android:layout_centerInParent="true"
             />
     </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/selectOnOff"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/select_off"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:visibility="gone"
+        />
 
 </RelativeLayout>

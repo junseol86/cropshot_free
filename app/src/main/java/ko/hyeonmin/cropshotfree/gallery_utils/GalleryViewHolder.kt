@@ -13,9 +13,11 @@ class GalleryViewHolder: RecyclerView.ViewHolder {
 
     var viewHolderRl: RelativeLayout? = null
     var iv: ImageView? = null
+    var selectOnOff: ImageView? = null
 
     constructor(item: View) : super(item) {
         viewHolderRl = item.findViewById(R.id.viewHolder) as RelativeLayout
         iv = item.findViewById(R.id.gallery_item_image) as ImageView
+        selectOnOff = item.findViewById(R.id.selectOnOff) as ImageView
     }
 }

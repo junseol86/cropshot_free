@@ -8,4 +8,6 @@
     <string name="yes">네</string>
     <string name="no">아니오</string>
     <string name="remove_failed">오류 - 지우지 못했습니다.</string>
+    <string name="new_version_available">새 버전이 출시되었습니다.</string>
+    <string name="ask_update">새 버전을 다운받으시겠습니까?</string>
 </resources>

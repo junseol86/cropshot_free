@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.support.constraint.ConstraintLayout
 import android.view.MotionEvent
-import android.view.View
 import android.widget.RelativeLayout
 import android.widget.TextView
 import ko.hyeonmin.cropshotfree.R
@@ -34,39 +33,12 @@ class GalleryTopbar(val activity: GalleryActivity) {
                 MotionEvent.ACTION_DOWN -> removeBtnRl?.setBackgroundColor(Color.parseColor("#222222"))
                 MotionEvent.ACTION_UP ->  {
                     removeBtnRl?.setBackgroundColor(Color.parseColor("#111111"))
-                    if (activity!!.galleryVp!!.visibility == View.VISIBLE) {
+                    if (activity.isPagerOn()) {
                         AlertDialog.Builder(activity)
                                 .setTitle(activity.resources.getString(R.string.remove_a_photo))
                                 .setPositiveButton(activity.resources.getString(R.string.yes), {_, _ ->
                                     val idxToRemove = activity.galleryVp!!.currentItem
-
-                                    val fileToDelete = File(activity.list[idxToRemove])
-                                    if (fileToDelete.exists()) {
-                                        if (fileToDelete.delete()) {
-                                            activity.list.removeAt(idxToRemove)
-
-                                            // 이미지 로드 저장된 해시맵에서 지운 파일 이후의 인덱스를 하나씩 당김
-                                            val newBitmapMap = HashMap<Int, Bitmap>()
-                                            activity.galleryRecyclerAdapter?.bitmapMap!!.filter { it.key < idxToRemove }.map { newBitmapMap.put(it.key, it.value) }
-                                            activity.galleryRecyclerAdapter?.bitmapMap!!.filter { it.key > idxToRemove }.map { newBitmapMap.put(it.key - 1, it.value) }
-                                            activity.galleryRecyclerAdapter?.bitmapMap = newBitmapMap
-
-                                            activity.galleryRecyclerAdapter?.notifyItemRemoved(idxToRemove)
-                                            activity.galleryRecyclerAdapter?.notifyDataSetChanged()
-                                            activity.galleryPagerAdapter?.notifyDataSetChanged()
-                                            when {
-                                                activity.list.isEmpty() -> activity.finish()
-                                                idxToRemove >= activity.list.size -> activity.galleryVp?.currentItem = idxToRemove - 1
-                                                else -> activity.galleryVp?.currentItem = idxToRemove
-                                            }
-                                        } else {
-                                            AlertDialog.Builder(activity)
-                                                    .setTitle(activity.resources.getString(R.string.remove_failed))
-                                                    .setPositiveButton(activity.resources.getString(R.string.ok), {_, _ ->})
-                                                    .show()
-                                        }
-                                    }
-
+                                    deletePhoto(idxToRemove)
                                 })
                                 .setNegativeButton(activity.resources.getString(R.string.no), {_, _ ->})
                                 .show()
@@ -74,7 +46,7 @@ class GalleryTopbar(val activity: GalleryActivity) {
                         AlertDialog.Builder(activity)
                                 .setTitle(activity.resources.getString(R.string.remove_photos))
                                 .setPositiveButton(activity.resources.getString(R.string.yes), {_, _ ->
-
+                                    deletePhotos(activity.galleryRecyclerAdapter!!.selectedList)
                                 })
                                 .setNegativeButton(activity.resources.getString(R.string.no), {_, _ ->})
                                 .show()
@@ -83,6 +55,57 @@ class GalleryTopbar(val activity: GalleryActivity) {
             }
             false
         }
+    }
+
+    fun deletePhoto(idxToRemove: Int) {
+        val fileToDelete = File(activity.list[idxToRemove])
+        if (fileToDelete.exists()) {
+            if (fileToDelete.delete()) {
+                activity.list.removeAt(idxToRemove)
+
+                // 이미지 로드 저장된 해시맵에서 지운 파일 이후의 인덱스를 하나씩 당김
+                val newBitmapMap = HashMap<Int, Bitmap>()
+                activity.galleryRecyclerAdapter?.bitmapMap!!.filter { it.key < idxToRemove }.map { newBitmapMap.put(it.key, it.value) }
+                activity.galleryRecyclerAdapter?.bitmapMap!!.filter { it.key > idxToRemove }.map { newBitmapMap.put(it.key - 1, it.value) }
+                activity.galleryRecyclerAdapter?.bitmapMap = newBitmapMap
+
+                activity.galleryRecyclerAdapter?.notifyItemRemoved(idxToRemove)
+                activity.galleryRecyclerAdapter?.notifyDataSetChanged()
+
+                when {
+                    activity.list.isEmpty() -> activity.finish()
+                    activity.isPagerOn() -> {
+                        activity.galleryPagerAdapter?.notifyDataSetChanged()
+                        activity.galleryVp?.currentItem = if (idxToRemove >= activity.list.size) idxToRemove - 1 else idxToRemove
+                    }
+                }
+            } else {
+                AlertDialog.Builder(activity)
+                        .setTitle(activity.resources.getString(R.string.remove_failed))
+                        .setPositiveButton(activity.resources.getString(R.string.ok), {_, _ ->})
+                        .show()
+            }
+        }
+    }
+
+    fun deletePhotos(selectedList: ArrayList<Int>) {
+        val deletedList = ArrayList<String>()
+        selectedList.map {
+            val fileToDelete = File(activity.list[it])
+            if (fileToDelete.exists()) {
+                if (fileToDelete.delete()) {
+                    deletedList.add(activity.list[it])
+                }
+            }
+        }
+        deletedList.map {
+            activity.list.remove(it)
+        }
+        activity.galleryRecyclerAdapter!!.bitmapMap = hashMapOf()
+        activity.galleryRecyclerAdapter!!.notifyDataSetChanged()
+        activity.galleryRecyclerAdapter!!.selectedList.removeAll(activity.galleryRecyclerAdapter!!.selectedList)
+        if (activity.list.isEmpty())
+            activity.finish()
     }
 
 }
