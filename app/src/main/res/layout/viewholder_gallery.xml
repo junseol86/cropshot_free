@@ -12,7 +12,7 @@
         android:layout_margin="4dp"
         >
         <ImageView
-            android:id="@+id/gallery_item_image"
+            android:id="@+id/galleryItemImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"

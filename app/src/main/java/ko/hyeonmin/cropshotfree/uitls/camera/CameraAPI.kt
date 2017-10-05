@@ -48,15 +48,12 @@ class CameraAPI(activity: CropShotActivity) {
                 if (mCharacteristics?.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_BACK) {
                     val map = mCharacteristics?.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
                     val sizes = map!!.getOutputSizes(SurfaceTexture::class.java)
-
-                    mCameraSize = if (sizes[0]!!.width <= 1920) sizes[0] else Size(1920, (sizes[0]!!.height * 1920f / sizes[0]!!.width).toInt())
-//                    mCameraSize = sizes[0]
+                    mCameraSize = sizes[0]
 
                     sizes
                         .asSequence()
                         .filter { it.width > mCameraSize!!.width }
                         .forEach { mCameraSize = it }
-
                     return cameraId
                 }
             }
@@ -122,7 +119,7 @@ class CameraAPI(activity: CropShotActivity) {
 
     fun onCameraDeviceOpened() {
         val texture = activity?.textureView?.surfaceTexture
-        texture?.setDefaultBufferSize(Math.max(mCameraSize!!.width, mCameraSize!!.height), Math.min(mCameraSize!!.width, mCameraSize!!.height))
+        texture?.setDefaultBufferSize(mCameraSize!!.width, mCameraSize!!.height)
 
         val surface = Surface(texture)
 

@@ -104,8 +104,11 @@ class GalleryTopbar(val activity: GalleryActivity) {
         activity.galleryRecyclerAdapter!!.bitmapMap = hashMapOf()
         activity.galleryRecyclerAdapter!!.notifyDataSetChanged()
         activity.galleryRecyclerAdapter!!.selectedList.removeAll(activity.galleryRecyclerAdapter!!.selectedList)
-        if (activity.list.isEmpty())
+        if (activity.list.isEmpty()) {
             activity.finish()
+        } else {
+            activity.galleryPagerAdapter?.notifyDataSetChanged()
+        }
     }
 
 }

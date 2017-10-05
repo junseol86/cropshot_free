@@ -5,6 +5,8 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import android.widget.Toast
+import ko.hyeonmin.cropshotfree.R
 import ko.hyeonmin.cropshotfree.activities.CropShotActivity
 
 /**
@@ -35,16 +37,25 @@ class CanvasView: View, View.OnTouchListener {
     private val rightDarkerShadePaint = Paint()
     private var bottomDarkerShadeRect: Rect = Rect(0, 0, 0, 0)
     private val bottomDarkerShadePaint = Paint()
-    private var ratioOuterRect: Rect = Rect(0, 0, 0, 0)
-    private val ratioOuterPaint = Paint()
+    private var outerRect: Rect = Rect(0, 0, 0, 0)
+    private val outerPaint = Paint()
 
 
     // fromX, fromY, toX, toY
     var sizeShrink = 0
     var fromToXY = hashMapOf(0 to 0f, 1 to 0f, 2 to 0f, 3 to 0f)
     var cropXY = hashMapOf(0 to 0f, 1 to 0f, 2 to 0f, 3 to 0f)
+
+    var squeezeModeOuterXY = hashMapOf(0 to 0, 1 to 0, 2 to 0, 3 to 0)
+    var squeezeModeHorizontal = true
+
     var ratioModeOuterXY = hashMapOf(0 to 0, 1 to 0, 2 to 0, 3 to 0)
-    var ratioModeHorizontal = true
+    var ratioW = 0.0
+    var ratioH = 0.0
+    var moveDistance = 0.0
+    var cropRatioW = 0
+    var cropRatioH = 0
+
     var touching = false
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
@@ -58,9 +69,9 @@ class CanvasView: View, View.OnTouchListener {
         cropPaint.strokeWidth = 4f
         cropPaint.color = Color.WHITE
 
-        ratioOuterPaint.style = Paint.Style.STROKE
-        ratioOuterPaint.strokeWidth = 1f
-        ratioOuterPaint.color = Color.WHITE
+        outerPaint.style = Paint.Style.STROKE
+        outerPaint.strokeWidth = 1f
+        outerPaint.color = Color.WHITE
 
         leftShadePaint.color = Color.argb(128, 0, 0, 0)
         leftShadePaint.style = Paint.Style.FILL
@@ -99,8 +110,35 @@ class CanvasView: View, View.OnTouchListener {
 
                 }
             }
-            activity?.console?.CROP_RATIO_MODE -> {
+            activity?.console?.CROP_SQUEEZE_MODE -> {
 
+                leftDarkerShadeRect.set(0, squeezeModeOuterXY[1]!!, squeezeModeOuterXY[0]!!, squeezeModeOuterXY[3]!!)
+                topDarkerShadeRect.set(0, 0, width, squeezeModeOuterXY[1]!!)
+                rightDarkerShadeRect.set(squeezeModeOuterXY[2]!!, squeezeModeOuterXY[1]!!, width, squeezeModeOuterXY[3]!!)
+                bottomDarkerShadeRect.set(0, squeezeModeOuterXY[3]!!, width, height)
+                canvas?.drawRect(leftDarkerShadeRect, leftDarkerShadePaint)
+                canvas?.drawRect(topDarkerShadeRect, topDarkerShadePaint)
+                canvas?.drawRect(rightDarkerShadeRect, rightDarkerShadePaint)
+                canvas?.drawRect(bottomDarkerShadeRect, bottomDarkerShadePaint)
+
+                outerRect.set(squeezeModeOuterXY[0]!!, squeezeModeOuterXY[1]!!, squeezeModeOuterXY[2]!!, squeezeModeOuterXY[3]!!)
+                canvas?.drawRect(outerRect, outerPaint)
+
+                if (touching) {
+                    if (squeezeModeHorizontal) {
+                        leftShadeRect.set(squeezeModeOuterXY[0]!!, squeezeModeOuterXY[1]!!, cropXY[0]!!.toInt(), squeezeModeOuterXY[3]!!)
+                        rightShadeRect.set(cropXY[2]!!.toInt(), squeezeModeOuterXY[1]!!, squeezeModeOuterXY[2]!!, squeezeModeOuterXY[3]!!)
+                        canvas?.drawRect(leftShadeRect, leftShadePaint)
+                        canvas?.drawRect(rightShadeRect, rightShadePaint)
+                    } else {
+                        topShadeRect.set(squeezeModeOuterXY[0]!!, squeezeModeOuterXY[1]!!, squeezeModeOuterXY[2]!!, cropXY[1]!!.toInt())
+                        bottomShadeRect.set(squeezeModeOuterXY[0]!!, cropXY[3]!!.toInt(), squeezeModeOuterXY[2]!!, squeezeModeOuterXY[3]!!)
+                        canvas?.drawRect(topShadeRect, topShadePaint)
+                        canvas?.drawRect(bottomShadeRect, bottomShadePaint)
+                    }
+                }
+            }
+            activity?.console?.CROP_RATIO_MODE -> {
                 leftDarkerShadeRect.set(0, ratioModeOuterXY[1]!!, ratioModeOuterXY[0]!!, ratioModeOuterXY[3]!!)
                 topDarkerShadeRect.set(0, 0, width, ratioModeOuterXY[1]!!)
                 rightDarkerShadeRect.set(ratioModeOuterXY[2]!!, ratioModeOuterXY[1]!!, width, ratioModeOuterXY[3]!!)
@@ -110,21 +148,18 @@ class CanvasView: View, View.OnTouchListener {
                 canvas?.drawRect(rightDarkerShadeRect, rightDarkerShadePaint)
                 canvas?.drawRect(bottomDarkerShadeRect, bottomDarkerShadePaint)
 
-                ratioOuterRect.set(ratioModeOuterXY[0]!!, ratioModeOuterXY[1]!!, ratioModeOuterXY[2]!!, ratioModeOuterXY[3]!!)
-                canvas?.drawRect(ratioOuterRect, ratioOuterPaint)
+                outerRect.set(ratioModeOuterXY[0]!!, ratioModeOuterXY[1]!!, ratioModeOuterXY[2]!!, ratioModeOuterXY[3]!!)
+                canvas?.drawRect(outerRect, outerPaint)
 
                 if (touching) {
-                    if (ratioModeHorizontal) {
-                        leftShadeRect.set(ratioModeOuterXY[0]!!, ratioModeOuterXY[1]!!, cropXY[0]!!.toInt(), ratioModeOuterXY[3]!!)
-                        rightShadeRect.set(cropXY[2]!!.toInt(), ratioModeOuterXY[1]!!, ratioModeOuterXY[2]!!, ratioModeOuterXY[3]!!)
-                        canvas?.drawRect(leftShadeRect, leftShadePaint)
-                        canvas?.drawRect(rightShadeRect, rightShadePaint)
-                    } else {
-                        topShadeRect.set(ratioModeOuterXY[0]!!, ratioModeOuterXY[1]!!, ratioModeOuterXY[2]!!, cropXY[1]!!.toInt())
-                        bottomShadeRect.set(ratioModeOuterXY[0]!!, cropXY[3]!!.toInt(), ratioModeOuterXY[2]!!, ratioModeOuterXY[3]!!)
-                        canvas?.drawRect(topShadeRect, topShadePaint)
-                        canvas?.drawRect(bottomShadeRect, bottomShadePaint)
-                    }
+                    topShadeRect.set(ratioModeOuterXY[0]!!, ratioModeOuterXY[1]!!, ratioModeOuterXY[2]!!, cropXY[1]!!.toInt())
+                    bottomShadeRect.set(ratioModeOuterXY[0]!!, cropXY[3]!!.toInt(), ratioModeOuterXY[2]!!, ratioModeOuterXY[3]!!)
+                    leftShadeRect.set(ratioModeOuterXY[0]!!, cropXY[1]!!.toInt(), cropXY[0]!!.toInt(), cropXY[3]!!.toInt())
+                    rightShadeRect.set(cropXY[2]!!.toInt(), cropXY[1]!!.toInt(), ratioModeOuterXY[2]!!, cropXY[3]!!.toInt())
+                    canvas?.drawRect(topShadeRect, topShadePaint)
+                    canvas?.drawRect(bottomShadeRect, bottomShadePaint)
+                    canvas?.drawRect(leftShadeRect, leftShadePaint)
+                    canvas?.drawRect(rightShadeRect, rightShadePaint)
                 }
             }
         }
@@ -136,12 +171,32 @@ class CanvasView: View, View.OnTouchListener {
 
     }
 
-    fun setRatioModeShade() {
+    fun setSqueezeModeShade() {
         sizeShrink = ((width / 2 - 10) * (1 - activity!!.console!!.sizerView!!.size)).toInt()
-        ratioModeOuterXY[0] = sizeShrink
-        ratioModeOuterXY[1] = sizeShrink
-        ratioModeOuterXY[2] = width - sizeShrink
-        ratioModeOuterXY[3] = height - sizeShrink
+        squeezeModeOuterXY[0] = sizeShrink
+        squeezeModeOuterXY[1] = sizeShrink
+        squeezeModeOuterXY[2] = width - sizeShrink
+        squeezeModeOuterXY[3] = height - sizeShrink
+        invalidate()
+    }
+    
+    fun setRatioModeShade() {
+        ratioW = if (activity!!.console!!.ratioWidthEt!!.text.toString().trim() == "") 1.0 else activity!!.console!!.ratioWidthEt!!.text!!.toString().toDouble()
+        if (ratioW == 0.0) ratioW = 1.0
+        ratioH = if (activity!!.console!!.ratioHeightEt!!.text.toString().trim() == "") 1.0 else activity!!.console!!.ratioHeightEt!!.text!!.toString().toDouble()
+        if (ratioH == 0.0) ratioH = 1.0
+
+        if (ratioW / ratioH > width.toDouble() / height.toDouble()) {
+            ratioModeOuterXY[0] = 0
+            ratioModeOuterXY[1] = ((height - (width * ratioH / ratioW)) / 2).toInt()
+            ratioModeOuterXY[2] = width
+            ratioModeOuterXY[3] = (ratioModeOuterXY[1]!! + width * ratioH / ratioW).toInt()
+        } else {
+            ratioModeOuterXY[0] = ((width - (height * ratioW / ratioH)) / 2).toInt()
+            ratioModeOuterXY[1] = 0
+            ratioModeOuterXY[2] = (ratioModeOuterXY[0]!! + height * ratioW / ratioH).toInt()
+            ratioModeOuterXY[3] = height
+        }
         invalidate()
     }
 
@@ -158,10 +213,18 @@ class CanvasView: View, View.OnTouchListener {
 
                 when (activity?.console?.crop_mode) {
                     activity?.console?.CROP_DIRECT_MODE -> {
-                        cropXY[0] = event.x
-                        cropXY[1] = event.y
-                        cropXY[2] = event.x
-                        cropXY[3] = event.y
+                        if (!activity!!.console!!.centered) {
+                            cropXY[0] = event.x
+                            cropXY[1] = event.y
+                            cropXY[2] = event.x
+                            cropXY[3] = event.y
+                        }
+                    }
+                    activity?.console?.CROP_RATIO_MODE -> {
+                        cropXY[0] = ratioModeOuterXY[0]!!.toFloat()
+                        cropXY[1] = ratioModeOuterXY[1]!!.toFloat()
+                        cropXY[2] = ratioModeOuterXY[2]!!.toFloat()
+                        cropXY[3] = ratioModeOuterXY[3]!!.toFloat()
                     }
                 }
                 touching = true
@@ -170,28 +233,54 @@ class CanvasView: View, View.OnTouchListener {
 
                 when (activity?.console?.crop_mode) {
                     activity?.console?.CROP_DIRECT_MODE -> {
-                        cropXY[0] = Math.max(0f, Math.min(cropXY[0]!!, event.x))
-                        cropXY[1] = Math.max(0f, Math.min(cropXY[1]!!, event.y))
-                        cropXY[2] = Math.min(width.toFloat(), Math.max(cropXY[2]!!, event.x))
-                        cropXY[3] = Math.min(height.toFloat(), Math.max(cropXY[3]!!, event.y))
+                        if (activity!!.console!!.centered) {
+                            fromToXY[2] = event.x
+                            fromToXY[3] = event.y
+
+                            cropXY[0] = Math.max(0f, (width - Math.abs(fromToXY[0]!! - fromToXY[2]!!) * 2f) / 2)
+                            cropXY[1] = Math.max(0f, (height - Math.abs(fromToXY[1]!! - fromToXY[3]!!) * 2f) / 2)
+                            cropXY[2] = Math.min(width.toFloat(), width - (width - Math.abs(fromToXY[0]!! - fromToXY[2]!!) * 2f) / 2)
+                            cropXY[3] = Math.min(height.toFloat(), height - (height - Math.abs(fromToXY[1]!! - fromToXY[3]!!) * 2f) / 2)
+                        } else {
+                            cropXY[0] = Math.max(0f, Math.min(cropXY[0]!!, event.x))
+                            cropXY[1] = Math.max(0f, Math.min(cropXY[1]!!, event.y))
+                            cropXY[2] = Math.min(width.toFloat(), Math.max(cropXY[2]!!, event.x))
+                            cropXY[3] = Math.min(height.toFloat(), Math.max(cropXY[3]!!, event.y))
+                        }
                     }
-                    activity?.console?.CROP_RATIO_MODE -> {
+                    activity?.console?.CROP_SQUEEZE_MODE -> {
 
                         fromToXY[2] = if (event.x < 0) 0f else if (event.x > width) width.toFloat() else event.x
                         fromToXY[3] = if (event.y < 0) 0f else if (event.y > height) height.toFloat() else event.y
 
                         if (Math.abs(fromToXY[0]!! - fromToXY[2]!!) > Math.abs(fromToXY[1]!! - fromToXY[3]!!)) {
-                            ratioModeHorizontal = true
-                            cropXY[0] = Math.min(ratioModeOuterXY[0]!! + Math.abs((fromToXY[0]!! - fromToXY[2]!!)), width / 2f - 10)
-                            cropXY[1] = ratioModeOuterXY[1]!!.toFloat()
-                            cropXY[2] = Math.max(ratioModeOuterXY[2]!! - Math.abs((fromToXY[0]!! - fromToXY[2]!!)), width / 2f + 10)
-                            cropXY[3] = ratioModeOuterXY[3]!!.toFloat()
+                            squeezeModeHorizontal = true
+                            cropXY[0] = Math.min(squeezeModeOuterXY[0]!! + Math.abs((fromToXY[0]!! - fromToXY[2]!!)), width / 2f - 10)
+                            cropXY[1] = squeezeModeOuterXY[1]!!.toFloat()
+                            cropXY[2] = Math.max(squeezeModeOuterXY[2]!! - Math.abs((fromToXY[0]!! - fromToXY[2]!!)), width / 2f + 10)
+                            cropXY[3] = squeezeModeOuterXY[3]!!.toFloat()
                         } else {
-                            ratioModeHorizontal = false
-                            cropXY[0] = ratioModeOuterXY[0]!!.toFloat()
-                            cropXY[1] = Math.min(ratioModeOuterXY[1]!! + Math.abs((fromToXY[1]!! - fromToXY[3]!!)), height / 2f - 10)
-                            cropXY[2] = ratioModeOuterXY[2]!!.toFloat()
-                            cropXY[3] = Math.max(ratioModeOuterXY[3]!! - Math.abs((fromToXY[1]!! - fromToXY[3]!!)), height / 2f + 10)
+                            squeezeModeHorizontal = false
+                            cropXY[0] = squeezeModeOuterXY[0]!!.toFloat()
+                            cropXY[1] = Math.min(squeezeModeOuterXY[1]!! + Math.abs((fromToXY[1]!! - fromToXY[3]!!)), height / 2f - 10)
+                            cropXY[2] = squeezeModeOuterXY[2]!!.toFloat()
+                            cropXY[3] = Math.max(squeezeModeOuterXY[3]!! - Math.abs((fromToXY[1]!! - fromToXY[3]!!)), height / 2f + 10)
+                        }
+                    }
+                    activity?.console?.CROP_RATIO_MODE -> {
+                        moveDistance = Math.pow((Math.pow((fromToXY[0]!! - event.x).toDouble(), 2.0) + Math.pow((fromToXY[1]!! - event.y).toDouble(), 2.0)), 0.5)
+                        if (Math.abs(ratioModeOuterXY[0]!! - ratioModeOuterXY[2]!!) > Math.abs(ratioModeOuterXY[1]!! - ratioModeOuterXY[3]!!)) {
+                            ratioW = Math.abs(ratioModeOuterXY[0]!! - ratioModeOuterXY[2]!!) - moveDistance
+                            ratioH = ratioW * Math.abs(ratioModeOuterXY[1]!! - ratioModeOuterXY[3]!!) / Math.abs(ratioModeOuterXY[0]!! - ratioModeOuterXY[2]!!)
+                        } else {
+                            ratioH = Math.abs(ratioModeOuterXY[1]!! - ratioModeOuterXY[3]!!) - moveDistance
+                            ratioW = ratioH * Math.abs(ratioModeOuterXY[0]!! - ratioModeOuterXY[2]!!) / Math.abs(ratioModeOuterXY[1]!! - ratioModeOuterXY[3]!!)
+                        }
+                        if (ratioW > 20 && ratioH > 20) {
+                            cropXY[0] = (ratioModeOuterXY[0]!! + (Math.abs(ratioModeOuterXY[0]!! - ratioModeOuterXY[2]!!) - ratioW) / 2f).toFloat()
+                            cropXY[1] = (ratioModeOuterXY[1]!! + (Math.abs(ratioModeOuterXY[1]!! - ratioModeOuterXY[3]!!) - ratioH) / 2f).toFloat()
+                            cropXY[2] = (ratioModeOuterXY[2]!! - (Math.abs(ratioModeOuterXY[0]!! - ratioModeOuterXY[2]!!) - ratioW) / 2f).toFloat()
+                            cropXY[3] = (ratioModeOuterXY[3]!! - (Math.abs(ratioModeOuterXY[1]!! - ratioModeOuterXY[3]!!) - ratioH) / 2f).toFloat()
                         }
                     }
                 }
@@ -205,10 +294,14 @@ class CanvasView: View, View.OnTouchListener {
                 touching = false
                 invalidate()
 
-                if (Math.abs(fromToXY[0]!! - event.x) < 20 || Math.abs(fromToXY[1]!! - event.y) < 20) {
+                if (Math.abs(cropXY[0]!! - cropXY[2]!!) < 20 && Math.abs(cropXY[1]!! - cropXY[3]!!) < 20) {
                     activity?.screenCaptor?.takeScreenShot(cropXY, false)
                 } else {
-                    activity?.screenCaptor?.takeScreenShot(cropXY, true)
+                    if (Math.abs(cropXY[0]!! - cropXY[2]!!) < 2 || Math.abs(cropXY[1]!! - cropXY[3]!!) < 2) {
+                        Toast.makeText(activity, activity!!.resources.getString(R.string.ratio_not_available), Toast.LENGTH_SHORT).show()
+                    } else {
+                        activity?.screenCaptor?.takeScreenShot(cropXY, true)
+                    }
                 }
             }
         }

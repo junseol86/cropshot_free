@@ -1,13 +1,20 @@
 <resources>
     <string name="app_name">크롭샷</string>
-    <string name="activate_camera">카메라 활성화</string>
-    <string name="empty_folder">폴더가 비었습니다.</string>
+
     <string name="ok">확인</string>
-    <string name="remove_a_photo">이 사진을 지우시겠습니까?</string>
-    <string name="remove_photos">선택한 사진들을 지우시겠습니까?</string>
     <string name="yes">네</string>
     <string name="no">아니오</string>
-    <string name="remove_failed">오류 - 지우지 못했습니다.</string>
-    <string name="new_version_available">새 버전이 출시되었습니다.</string>
+
+    <string name="remove_a_photo">이 사진을 지우시겠습니까?</string>
+    <string name="remove_photos">선택한 사진들을 지우시겠습니까?</string>
     <string name="ask_update">새 버전을 다운받으시겠습니까?</string>
+
+    <string name="new_version_available">새 버전이 출시되었습니다.</string>
+    <string name="empty_folder">폴더가 비었습니다.</string>
+    <string name="remove_failed">오류 - 지우지 못했습니다.</string>
+    <string name="ratio_not_available">주어진 비율로 캡쳐할 수 없습니다.</string>
+
+    <string name="activate_camera">카메라 활성화</string>
+    <string name="centered">가운데로</string>
+
 </resources>

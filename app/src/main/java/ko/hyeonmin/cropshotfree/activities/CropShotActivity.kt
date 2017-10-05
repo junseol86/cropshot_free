@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.support.constraint.ConstraintLayout
 import android.view.TextureView
 import android.view.Window
 import ko.hyeonmin.cropshotfree.uitls.camera.CameraAPI
@@ -27,11 +28,15 @@ class CropShotActivity : Activity() {
 
     var mTouchFocus: TouchFocus? = null
 
+    var cropshotCl: ConstraintLayout? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_crop_shot)
+
+        cropshotCl = findViewById(R.id.cropshotCl) as ConstraintLayout
 
         VersionCheck(this).sendVersionCheckRequest()
 

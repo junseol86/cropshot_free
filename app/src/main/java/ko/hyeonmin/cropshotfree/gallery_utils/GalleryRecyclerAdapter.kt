@@ -30,31 +30,16 @@ class GalleryRecyclerAdapter(activity: GalleryActivity, list: ArrayList<String>)
 
     override fun onBindViewHolder(holder: GalleryViewHolder?, position: Int) {
 
+        itemWidth = activity!!.galleryRv!!.width / 3 - (8 * density).toInt()
+
         if (bitmapMap.containsKey(position)) {
             itemBitmap = bitmapMap[position]
         } else {
-            itemWidth = activity!!.galleryRv!!.width / 3 - (8 * density).toInt()
-            orgBitmap = BitmapFactory.decodeFile(list!![position])
-
-            if (orgBitmap!!.width.toFloat() / orgBitmap!!.height.toFloat() > 1.5) {
-                cropSize = if (orgBitmap!!.width > itemWidth) itemWidth.toFloat() else orgBitmap!!.width.toFloat()
-                orgBitmap = Bitmap.createBitmap(orgBitmap, ((orgBitmap!!.width - cropSize) / 2).toInt(), 0, cropSize.toInt(), orgBitmap!!.height)
-            } else if (orgBitmap!!.height.toFloat() / orgBitmap!!.width.toFloat() > 1.5) {
-                cropSize = if (orgBitmap!!.height > Math.max(orgBitmap!!.width, itemWidth) * 1.5f) Math.max(orgBitmap!!.width, itemWidth) * 1.5f else orgBitmap!!.height.toFloat()
-                orgBitmap = Bitmap.createBitmap(orgBitmap, 0, ((orgBitmap!!.height - cropSize) / 2).toInt(), orgBitmap!!.width, cropSize.toInt())
-            }
-
-            itemBitmap = if (orgBitmap!!.width > itemWidth) {
-                Bitmap.createScaledBitmap(orgBitmap, itemWidth, orgBitmap!!.height * itemWidth / orgBitmap!!.width, true)
-            } else {
-                orgBitmap
-            }
-
-            bitmapMap.put(position, itemBitmap!!)
+            loadThumbBitmap(position, itemWidth)
         }
 
         holder?.iv?.setImageBitmap(itemBitmap)
-        holder?.iv?.setOnClickListener{
+        holder?.viewHolderRl?.setOnClickListener{
             if (activity!!.selectOn) {
                 if (selectedList.contains(position)) {
                     selectedList.remove(position)
@@ -68,7 +53,7 @@ class GalleryRecyclerAdapter(activity: GalleryActivity, list: ArrayList<String>)
             }
         }
 
-        holder?.iv?.setOnLongClickListener {
+        holder?.viewHolderRl?.setOnLongClickListener {
             if (activity!!.selectOn) false
             activity?.setSelectOnOff(true)
             selectedList.add(position)
@@ -79,6 +64,27 @@ class GalleryRecyclerAdapter(activity: GalleryActivity, list: ArrayList<String>)
         if (activity!!.selectOn) {
             holder?.selectOnOff?.setImageResource(if (selectedList.contains(position)) R.drawable.select_on else R.drawable.select_off)
         }
+
+    }
+
+    private fun loadThumbBitmap(position: Int, itemWidth: Int) {
+        orgBitmap = BitmapFactory.decodeFile(list!![position])
+
+        if (orgBitmap!!.width.toFloat() / orgBitmap!!.height.toFloat() > 1.5) {
+            cropSize = if (orgBitmap!!.width > itemWidth) itemWidth.toFloat() else orgBitmap!!.width.toFloat()
+            orgBitmap = Bitmap.createBitmap(orgBitmap, ((orgBitmap!!.width - cropSize) / 2).toInt(), 0, cropSize.toInt(), orgBitmap!!.height)
+        } else if (orgBitmap!!.height.toFloat() / orgBitmap!!.width.toFloat() > 1.5) {
+            cropSize = if (orgBitmap!!.height > Math.max(orgBitmap!!.width, itemWidth) * 1.5f) Math.max(orgBitmap!!.width, itemWidth) * 1.5f else orgBitmap!!.height.toFloat()
+            orgBitmap = Bitmap.createBitmap(orgBitmap, 0, ((orgBitmap!!.height - cropSize) / 2).toInt(), orgBitmap!!.width, cropSize.toInt())
+        }
+
+        itemBitmap = if (orgBitmap!!.width > itemWidth) {
+            Bitmap.createScaledBitmap(orgBitmap, itemWidth, orgBitmap!!.height * itemWidth / orgBitmap!!.width, true)
+        } else {
+            orgBitmap
+        }
+
+        bitmapMap.put(position, itemBitmap!!)
     }
 
     override fun getItemCount(): Int {

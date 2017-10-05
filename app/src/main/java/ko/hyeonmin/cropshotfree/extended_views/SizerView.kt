@@ -61,7 +61,7 @@ class SizerView : View, View.OnTouchListener {
 
     override fun onTouch(view: View?, event: MotionEvent?): Boolean {
 
-        if (activity!!.console!!.crop_mode != activity!!.console!!.CROP_RATIO_MODE) return true
+        if (activity!!.console!!.crop_mode != activity!!.console!!.CROP_SQUEEZE_MODE) return true
 
         when (event!!.action) {
             MotionEvent.ACTION_DOWN -> {
@@ -76,7 +76,7 @@ class SizerView : View, View.OnTouchListener {
                     if (sizeLineLength > moveRange ) sizeLineLength = moveRange.toFloat()
                     size = sizeLineLength / moveRange
                     invalidate()
-                    activity?.canvasView?.setRatioModeShade()
+                    activity?.canvasView?.setSqueezeModeShade()
                 }
             }
             MotionEvent.ACTION_UP -> {
