@@ -2,12 +2,15 @@ package ko.hyeonmin.cropshotfree.activities
 
 import android.Manifest
 import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.view.TextureView
+import android.view.View
 import android.view.Window
+import android.widget.ImageView
 import ko.hyeonmin.cropshotfree.uitls.camera.CameraAPI
 import ko.hyeonmin.cropshotfree.R
 import ko.hyeonmin.cropshotfree.extended_views.CanvasView
@@ -30,6 +33,9 @@ class CropShotActivity : Activity() {
 
     var cropshotCl: ConstraintLayout? = null
 
+    var moveFinger: ImageView? = null
+
+    var firstTime = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +43,7 @@ class CropShotActivity : Activity() {
         setContentView(R.layout.activity_crop_shot)
 
         cropshotCl = findViewById(R.id.cropshotCl) as ConstraintLayout
+        moveFinger = findViewById(R.id.moveFinger) as ImageView
 
         VersionCheck(this).sendVersionCheckRequest()
 
@@ -48,6 +55,7 @@ class CropShotActivity : Activity() {
         panel = Panel(this)
         canvasView = findViewById(R.id.canvasView) as CanvasView
         mTouchFocus = TouchFocus(this)
+
 
         getPermissionsAndCameraOn()
     }
@@ -111,5 +119,19 @@ class CropShotActivity : Activity() {
 
     fun closeCamera() {
         cameraApi?.closeCamera()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        firstTime = false
+    }
+
+    override fun onBackPressed() {
+        if (moveFinger!!.visibility == View.VISIBLE) {
+            moveFinger?.clearAnimation()
+            moveFinger?.visibility = View.GONE
+            return
+        }
+
+        super.onBackPressed()
     }
 }

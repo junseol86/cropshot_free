@@ -8,6 +8,7 @@ import android.os.Environment
 import android.support.constraint.ConstraintLayout
 import android.support.v4.content.FileProvider
 import android.view.MotionEvent
+import android.view.View
 import android.widget.TextView
 import ko.hyeonmin.cropshotfree.activities.CropShotActivity
 import ko.hyeonmin.cropshotfree.R
@@ -35,6 +36,12 @@ class Panel(activity: CropShotActivity) {
         folderNameTV?.text = activity.caches!!.folderName
 
         folderBtnCl?.setOnTouchListener { _, event ->
+
+            if (activity.moveFinger!!.visibility == View.VISIBLE) {
+                activity.moveFinger!!.clearAnimation()
+                activity.moveFinger!!.visibility = View.GONE
+            }
+
             when (event!!.action) {
                 MotionEvent.ACTION_DOWN -> {
                     folderBtnCl?.setBackgroundColor(Color.parseColor("#222222"))
@@ -51,7 +58,7 @@ class Panel(activity: CropShotActivity) {
                                 .setPositiveButton(activity.resources.getText(R.string.ok)) { _, _ ->  }
                                 .show()
                     } else {
-                        activity.startActivity(Intent(activity, GalleryActivity::class.java))
+                        activity.startActivityForResult(Intent(activity, GalleryActivity::class.java), 0)
                     }
                 }
             }

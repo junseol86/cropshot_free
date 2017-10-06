@@ -203,6 +203,12 @@ class CanvasView: View, View.OnTouchListener {
     override fun onTouch(view: View?, event: MotionEvent?): Boolean {
         when (event!!.action) {
             MotionEvent.ACTION_DOWN -> {
+
+                if (activity!!.moveFinger!!.visibility == View.VISIBLE) {
+                    activity?.moveFinger?.clearAnimation()
+                    activity?.moveFinger?.visibility = View.GONE
+                }
+
                 activity?.console?.active = false
                 activity?.panel?.active = false
 

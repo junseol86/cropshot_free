@@ -12,6 +12,8 @@ import android.graphics.SurfaceTexture
 import android.view.Surface
 import java.util.*
 import android.view.View
+import android.view.animation.AnimationUtils
+import ko.hyeonmin.cropshotfree.R
 import ko.hyeonmin.cropshotfree.activities.CropShotActivity
 
 
@@ -125,6 +127,11 @@ class CameraAPI(activity: CropShotActivity) {
 
         setCaptureSession(mCameraDevice!!, surface)
         setCaptureRequest(mCameraDevice!!, surface)
+
+        if (activity!!.firstTime) {
+            activity?.moveFinger?.visibility = View.VISIBLE
+            activity?.moveFinger?.startAnimation(AnimationUtils.loadAnimation(activity, R.anim.blink))
+        }
     }
 
     fun closeCamera() {
