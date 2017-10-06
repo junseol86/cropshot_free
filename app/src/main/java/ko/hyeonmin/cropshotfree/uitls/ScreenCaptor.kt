@@ -48,7 +48,7 @@ class ScreenCaptor(activity: CropShotActivity) {
             }
         }
 
-        fileName = "$directory/${DateFormat.format("yyyy-MM-dd-hh-mm-ss", now)}.png"
+        fileName = "$directory/${DateFormat.format("yyyy-MM-dd-HH-mm-ss", now)}.png"
 
         try {
             imageFile = File(fileName)
