@@ -173,6 +173,7 @@ class CameraAPI(activity: CropShotActivity) {
         }
     }
 
+    // 카메라 화면의 이미지 비율을 여기서 맞춰준다
     fun transformImage(width: Int, height: Int) {
         if (mPreviewSize == null || activity!!.textureView == null) {
             return
