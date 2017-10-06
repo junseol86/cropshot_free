@@ -40,6 +40,10 @@ class CanvasView: View, View.OnTouchListener {
     private var outerRect: Rect = Rect(0, 0, 0, 0)
     private val outerPaint = Paint()
 
+    private var directOrgRect: Rect = Rect(0, 0, 0, 0)
+    private val directOrgPaint = Paint()
+    private var directOrgLinePaint = Paint()
+
 
     // fromX, fromY, toX, toY
     var sizeShrink = 0
@@ -90,6 +94,14 @@ class CanvasView: View, View.OnTouchListener {
         rightDarkerShadePaint.style = Paint.Style.FILL
         bottomDarkerShadePaint.color = Color.argb(192, 0, 0, 0)
         bottomDarkerShadePaint.style = Paint.Style.FILL
+
+        directOrgPaint.color = Color.YELLOW
+        directOrgPaint.style = Paint.Style.STROKE
+        directOrgPaint.pathEffect = DashPathEffect(floatArrayOf(6f, 4f), 0f)
+        directOrgPaint.strokeWidth = 1.5f
+        directOrgLinePaint.color = Color.YELLOW
+        directOrgLinePaint.style = Paint.Style.STROKE
+        directOrgLinePaint.strokeWidth = 1f
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -107,7 +119,14 @@ class CanvasView: View, View.OnTouchListener {
                     canvas?.drawRect(topShadeRect, topShadePaint)
                     canvas?.drawRect(rightShadeRect, rightShadePaint)
                     canvas?.drawRect(bottomShadeRect, bottomShadePaint)
-
+                    if (activity!!.console!!.centered) {
+                        directOrgRect = Rect(fromToXY[0]!!.toInt(), fromToXY[1]!!.toInt(), fromToXY[2]!!.toInt(), fromToXY[3]!!.toInt())
+                        canvas?.drawRect(directOrgRect, directOrgPaint)
+                        canvas?.drawLine(cropXY[0]!!, cropXY[1]!!, fromToXY[0]!!, fromToXY[1]!!, directOrgLinePaint)
+                        canvas?.drawLine(cropXY[0]!!, cropXY[3]!!, fromToXY[0]!!, fromToXY[3]!!, directOrgLinePaint)
+                        canvas?.drawLine(cropXY[2]!!, cropXY[1]!!, fromToXY[2]!!, fromToXY[1]!!, directOrgLinePaint)
+                        canvas?.drawLine(cropXY[2]!!, cropXY[3]!!, fromToXY[2]!!, fromToXY[3]!!, directOrgLinePaint)
+                    }
                 }
             }
             activity?.console?.CROP_SQUEEZE_MODE -> {
