@@ -34,12 +34,12 @@ class TouchFocus(activity: CropShotActivity) {
 
         if (sendingFocusRequest) return
 
-        if (activity.cameraApi!!.mCameraSize!!.width / activity.cameraApi!!.mCameraSize!!.height.toFloat() > activity.canvasView!!.width / activity.canvasView!!.height.toFloat()) {
-            sizeRatio = activity.cameraApi!!.mCameraSize!!.height / activity.canvasView!!.height.toFloat()
-            offsetX = ((activity.cameraApi!!.mCameraSize!!.width - activity.canvasView!!.width * sizeRatio) / 2).toInt()
+        if (activity.cameraApi!!.mPreviewSize!!.width / activity.cameraApi!!.mPreviewSize!!.height.toFloat() > activity.canvasView!!.width / activity.canvasView!!.height.toFloat()) {
+            sizeRatio = activity.cameraApi!!.mPreviewSize!!.height / activity.canvasView!!.height.toFloat()
+            offsetX = ((activity.cameraApi!!.mPreviewSize!!.width - activity.canvasView!!.width * sizeRatio) / 2).toInt()
         } else {
-            sizeRatio = activity.cameraApi!!.mCameraSize!!.width / activity.canvasView!!.width.toFloat()
-            offsetY = ((activity.cameraApi!!.mCameraSize!!.height - activity.canvasView!!.height * sizeRatio) / 2).toInt()
+            sizeRatio = activity.cameraApi!!.mPreviewSize!!.width / activity.canvasView!!.width.toFloat()
+            offsetY = ((activity.cameraApi!!.mPreviewSize!!.height - activity.canvasView!!.height * sizeRatio) / 2).toInt()
         }
 
         focusXY = MeteringRectangle((offsetX + cropXY[0]!! * sizeRatio).toInt(), (offsetY + cropXY[1]!! * sizeRatio).toInt(),

@@ -98,7 +98,7 @@ class CropShotActivity : Activity() {
     override fun onResume() {
         super.onResume()
         if (textureView!!.isAvailable) {
-            openCamera()
+            openCamera(textureView!!.width, textureView!!.height)
         } else {
             textureView?.surfaceTextureListener = MySurfaceTextureListener(this)
         }
@@ -111,9 +111,9 @@ class CropShotActivity : Activity() {
         super.onPause()
     }
 
-    fun openCamera() {
+    fun openCamera(width: Int, height: Int) {
         val cameraManager = cameraApi?.CameraManager()
-        val cameraId = cameraApi?.CameraIdFromCharacteristics(cameraManager!!)
+        val cameraId = cameraApi?.CameraIdFromCharacteristics(cameraManager!!, width, height)
         cameraApi?.CameraDevice(cameraManager!!, cameraId!!)
     }
 

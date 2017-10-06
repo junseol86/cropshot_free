@@ -18,7 +18,7 @@ class MySurfaceTextureListener(activity: CropShotActivity): TextureView.SurfaceT
         return true
     }
 
-    override fun onSurfaceTextureAvailable(p0: android.graphics.SurfaceTexture?, p1: Int, p2: Int) {
-        activity.openCamera()
+    override fun onSurfaceTextureAvailable(p0: android.graphics.SurfaceTexture?, width: Int, height: Int) {
+        activity.openCamera(width, height)
     }
 }
