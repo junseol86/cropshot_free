@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.os.Environment
 import android.support.v4.view.ViewPager
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.View
@@ -45,7 +46,7 @@ class GalleryActivity : Activity() {
         galleryRv = findViewById(R.id.galleryRv) as RecyclerView
         galleryRv?.setHasFixedSize(true)
 
-        galleryLm = StaggeredGridLayoutManager(3, 1)
+        galleryLm = GridLayoutManager(this, 3)
         galleryRv?.layoutManager = galleryLm
 
         galleryVp = findViewById(R.id.galleryVp) as ViewPager

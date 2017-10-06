@@ -2,6 +2,8 @@ package ko.hyeonmin.cropshotfree.gallery_utils
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.os.AsyncTask
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -18,9 +20,6 @@ class GalleryRecyclerAdapter(activity: GalleryActivity, list: ArrayList<String>)
     private var list: ArrayList<String>? = list
     var activity: GalleryActivity? = activity
     var itemWidth = 0
-    var orgBitmap: Bitmap? = null
-    var itemBitmap: Bitmap? = null
-    var cropSize = 0f
     var density = activity.resources.displayMetrics.density
     var bitmapMap = HashMap<Int, Bitmap>()
     var selectedList = ArrayList<Int>()
@@ -30,15 +29,11 @@ class GalleryRecyclerAdapter(activity: GalleryActivity, list: ArrayList<String>)
 
     override fun onBindViewHolder(holder: GalleryViewHolder?, position: Int) {
 
-        itemWidth = activity!!.galleryRv!!.width / 3 - (8 * density).toInt()
+        itemWidth = activity!!.galleryRv!!.width / 3 - (2 * density).toInt()
 
-        if (bitmapMap.containsKey(position)) {
-            itemBitmap = bitmapMap[position]
-        } else {
-            loadThumbBitmap(position, itemWidth)
-        }
+        holder?.iv?.visibility = View.GONE
+        loadBitmapTask(list!!, bitmapMap, holder!!, itemWidth, position).execute()
 
-        holder?.iv?.setImageBitmap(itemBitmap)
         holder?.viewHolderRl?.setOnClickListener{
             if (activity!!.selectOn) {
                 if (selectedList.contains(position)) {
@@ -67,28 +62,45 @@ class GalleryRecyclerAdapter(activity: GalleryActivity, list: ArrayList<String>)
 
     }
 
-    private fun loadThumbBitmap(position: Int, itemWidth: Int) {
-        orgBitmap = BitmapFactory.decodeFile(list!![position])
-
-        if (orgBitmap!!.width.toFloat() / orgBitmap!!.height.toFloat() > 1.5) {
-            cropSize = if (orgBitmap!!.width > itemWidth) itemWidth.toFloat() else orgBitmap!!.width.toFloat()
-            orgBitmap = Bitmap.createBitmap(orgBitmap, ((orgBitmap!!.width - cropSize) / 2).toInt(), 0, cropSize.toInt(), orgBitmap!!.height)
-        } else if (orgBitmap!!.height.toFloat() / orgBitmap!!.width.toFloat() > 1.5) {
-            cropSize = if (orgBitmap!!.height > Math.max(orgBitmap!!.width, itemWidth) * 1.5f) Math.max(orgBitmap!!.width, itemWidth) * 1.5f else orgBitmap!!.height.toFloat()
-            orgBitmap = Bitmap.createBitmap(orgBitmap, 0, ((orgBitmap!!.height - cropSize) / 2).toInt(), orgBitmap!!.width, cropSize.toInt())
-        }
-
-        itemBitmap = if (orgBitmap!!.width > itemWidth) {
-            Bitmap.createScaledBitmap(orgBitmap, itemWidth, orgBitmap!!.height * itemWidth / orgBitmap!!.width, true)
-        } else {
-            orgBitmap
-        }
-
-        bitmapMap.put(position, itemBitmap!!)
-    }
 
     override fun getItemCount(): Int {
         return list!!.size
+    }
+
+    class loadBitmapTask(val list: ArrayList<String>, val bitmapMap: HashMap<Int, Bitmap>, val holder: GalleryViewHolder, val itemWidth: Int, val position: Int): AsyncTask<Void, Void, Bitmap>() {
+
+        override fun onPreExecute() {
+            super.onPreExecute()
+            if (bitmapMap.containsKey(position)) {
+                holder.iv?.setImageBitmap(bitmapMap[position])
+                holder.iv?.visibility = View.VISIBLE
+            }
+        }
+
+        override fun doInBackground(vararg params: Void?): Bitmap {
+            return if (bitmapMap.containsKey(position)) bitmapMap[position]!! else loadThumbBitmap(position)
+        }
+
+        override fun onPostExecute(result: Bitmap?) {
+            super.onPostExecute(result)
+            if (!bitmapMap.containsKey(position)) {
+                holder.iv?.setImageBitmap(result!!)
+                holder.iv?.visibility = View.VISIBLE
+                bitmapMap.put(position, result!!)
+            }
+        }
+
+        private fun loadThumbBitmap(position: Int): Bitmap {
+            var orgBitmap = BitmapFactory.decodeFile(list!![position])
+
+            val itemBitmap = if (orgBitmap.width > orgBitmap.height) {
+                Bitmap.createScaledBitmap(orgBitmap, itemWidth, (orgBitmap.height * itemWidth.toFloat() / orgBitmap.width).toInt(), true)
+            } else {
+                Bitmap.createScaledBitmap(orgBitmap, (orgBitmap.width * itemWidth.toFloat() / orgBitmap.height).toInt(), itemWidth, true)
+            }
+
+            return itemBitmap!!
+        }
     }
 
 }

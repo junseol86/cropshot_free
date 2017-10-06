@@ -5,11 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-    <RelativeLayout
+    <ko.hyeonmin.cropshotfree.extended_views.SquareView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:minHeight="52dp"
-        android:layout_margin="4dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginRight="1dp"
+        android:background="#000000"
         >
         <ImageView
             android:id="@+id/galleryItemImage"
@@ -17,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             />
-    </RelativeLayout>
+    </ko.hyeonmin.cropshotfree.extended_views.SquareView>
 
     <ImageView
         android:id="@+id/selectOnOff"
