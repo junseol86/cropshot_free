@@ -14,6 +14,8 @@
     <string name="remove_failed">오류 - 지우지 못했습니다.</string>
     <string name="ratio_not_available">주어진 비율로 캡쳐할 수 없습니다.</string>
 
+    <string name="saving_image">이미지 저장중</string>
+
     <string name="activate_camera">카메라 활성화</string>
     <string name="centered">가운데로</string>
 

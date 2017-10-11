@@ -1,5 +1,6 @@
 package ko.hyeonmin.cropshotfree.uitls.camera
 
+import android.app.ProgressDialog
 import android.util.Size
 import android.content.Context
 import android.graphics.ImageFormat
@@ -50,11 +51,15 @@ class CameraAPI(activity: CropShotActivity) {
     var mBackgroundHandler: Handler? = null
 
     val photoTaker = PhotoTaker(this)
+    var progressDialog: ProgressDialog? = null
 
     val ORIENTATIONS = SparseIntArray()
 
     init {
         activity.canvasView?.visibility = View.VISIBLE
+        progressDialog = ProgressDialog(activity)
+        progressDialog?.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+        progressDialog?.setMessage(activity.resources.getString(R.string.saving_image))
         ORIENTATIONS.append(Surface.ROTATION_0, 90)
         ORIENTATIONS.append(Surface.ROTATION_90, 0)
         ORIENTATIONS.append(Surface.ROTATION_180, 270)

@@ -14,6 +14,8 @@
     <string name="ratio_not_available">Cannot capture in given ratio</string>
     <string name="remove_failed">Error - Failed to remove</string>
 
+    <string name="saving_image">Saving image</string>
+
     <string name="activate_camera">Activate Camera</string>
     <string name="centered">Centered</string>
 

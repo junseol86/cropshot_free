@@ -1,5 +1,6 @@
 package ko.hyeonmin.cropshotfree.uitls.camera
 
+import android.app.ProgressDialog
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
@@ -7,8 +8,9 @@ import android.media.Image
 import android.media.ImageReader
 import android.media.MediaScannerConnection
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.text.format.DateFormat
-import android.widget.Toast
 import ko.hyeonmin.cropshotfree.activities.CropShotActivity
 import java.io.File
 import java.io.FileOutputStream
@@ -26,9 +28,17 @@ class PhotoTaker(val cameraAPI: CameraAPI) {
     val mOnImageAvailableListener = ImageReader.OnImageAvailableListener {
         reader -> cameraAPI.mBackgroundHandler?.post(ImageSaver(reader!!.acquireNextImage(), cameraAPI!!.activity!!))
     }
+    var handler = Handler()
 
     fun setPhotoTakingAndSpinner(onOff: Boolean) {
         photoTaking = onOff
+        if (onOff) {
+            cameraAPI.progressDialog?.show()
+        } else {
+            handler.post({
+                cameraAPI.progressDialog?.hide()
+            })
+        }
     }
 
     class ImageSaver(val image: Image, val activity: CropShotActivity): Runnable {
@@ -50,8 +60,8 @@ class PhotoTaker(val cameraAPI: CameraAPI) {
 
             directory = Environment.getExternalStorageDirectory().toString() + "/cropshot"
             folder = File(directory)
-            if (!folder!!.exists()) {
-                createFolderSucess = folder?.mkdir()!!
+            if (!folder.exists()) {
+                createFolderSucess = folder.mkdir()
                 if (!createFolderSucess) {
                     return
                 }
@@ -70,14 +80,10 @@ class PhotoTaker(val cameraAPI: CameraAPI) {
 
             mImageFile = File(fileName)
 
-            println("BeforeBuffer")
-
             val byteBuffer = image.planes[0].buffer
             val bytes = ByteArray(byteBuffer.remaining())
             byteBuffer.get(bytes)
             orgBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-
-            println("Bitmap made")
 
             val matrix = Matrix()
             matrix.postRotate(90f)
@@ -94,8 +100,6 @@ class PhotoTaker(val cameraAPI: CameraAPI) {
             (0..3).map {
                 cropXY[it] = (activity.canvasView!!.cropXY[it]!! * width / activity.canvasView!!.width).toInt()
             }
-
-            println("$offsetX $offsetY $width $height")
 
             cropBitmap = Bitmap.createBitmap(rotBitmap!!, offsetX + cropXY[0]!!.toInt(), offsetY + cropXY[1]!!.toInt(),
                     Math.abs(cropXY[2]!! - cropXY[0]!!), Math.abs(cropXY[3]!! - cropXY[1]!!))
@@ -114,14 +118,12 @@ class PhotoTaker(val cameraAPI: CameraAPI) {
                         fileOutputStream.close()
                     } catch (e: IOException) {
                         e.printStackTrace()
-                    } finally {
-                        println("Image Saved")
-                        cropBitmap = null
-                        Toast.makeText(activity, "IMAGE SAVED", Toast.LENGTH_SHORT).show()
-                        MediaScannerConnection.scanFile(activity, arrayOf(fileName), arrayOf("image/jpg"), null)
-                        activity.cameraApi!!.photoTaker.setPhotoTakingAndSpinner(false)
                     }
                 }
+                cropBitmap = null
+                MediaScannerConnection.scanFile(activity, arrayOf(fileName), arrayOf("image/jpg"), null)
+
+                activity.cameraApi!!.photoTaker.setPhotoTakingAndSpinner(false)
             }
         }
 
