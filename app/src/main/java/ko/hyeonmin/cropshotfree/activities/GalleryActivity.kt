@@ -84,7 +84,7 @@ class GalleryActivity : Activity() {
         val files = parentDir.listFiles()
         files.sortByDescending { it.absolutePath }
         files
-                .filter { !it.isDirectory && it.name.endsWith(".png") }
+                .filter { !it.isDirectory && it.name.endsWith(".jpg") }
                 .mapTo(inFiles) { it.absolutePath }
         return inFiles
     }

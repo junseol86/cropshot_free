@@ -220,6 +220,8 @@ class CanvasView: View, View.OnTouchListener {
     }
 
     override fun onTouch(view: View?, event: MotionEvent?): Boolean {
+        if (activity!!.cameraApi!!.photoTaker.photoTaking) return false
+
         when (event!!.action) {
             MotionEvent.ACTION_DOWN -> {
 
@@ -319,15 +321,16 @@ class CanvasView: View, View.OnTouchListener {
                 touching = false
                 invalidate()
 
-                if (Math.abs(cropXY[0]!! - cropXY[2]!!) < 20 && Math.abs(cropXY[1]!! - cropXY[3]!!) < 20) {
-                    activity?.screenCaptor?.takeScreenShot(cropXY, false)
-                } else {
-                    if (Math.abs(cropXY[0]!! - cropXY[2]!!) < 2 || Math.abs(cropXY[1]!! - cropXY[3]!!) < 2) {
-                        Toast.makeText(activity, activity!!.resources.getString(R.string.ratio_not_available), Toast.LENGTH_SHORT).show()
-                    } else {
-                        activity?.screenCaptor?.takeScreenShot(cropXY, true)
-                    }
-                }
+                activity?.cameraApi?.setFocus(true)
+//                if (Math.abs(cropXY[0]!! - cropXY[2]!!) < 20 && Math.abs(cropXY[1]!! - cropXY[3]!!) < 20) {
+//                    activity?.screenCaptor?.takeScreenShot(cropXY, false)
+//                } else {
+//                    if (Math.abs(cropXY[0]!! - cropXY[2]!!) < 2 || Math.abs(cropXY[1]!! - cropXY[3]!!) < 2) {
+//                        Toast.makeText(activity, activity!!.resources.getString(R.string.ratio_not_available), Toast.LENGTH_SHORT).show()
+//                    } else {
+//                        activity?.screenCaptor?.takeScreenShot(cropXY, true)
+//                    }
+//                }
             }
         }
         return true

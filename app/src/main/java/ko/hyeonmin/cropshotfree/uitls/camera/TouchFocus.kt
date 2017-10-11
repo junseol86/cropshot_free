@@ -20,6 +20,7 @@ class TouchFocus(activity: CropShotActivity) {
 
     private var focusXY: MeteringRectangle? = null
     private var lastCropXY = hashMapOf(0 to 0, 1 to 0, 2 to 0, 3 to 0)
+
     var sendingFocusRequest = false
 
     private val SENSIBILITY = 15
@@ -45,20 +46,20 @@ class TouchFocus(activity: CropShotActivity) {
         focusXY = MeteringRectangle((offsetX + cropXY[0]!! * sizeRatio).toInt(), (offsetY + cropXY[1]!! * sizeRatio).toInt(),
                 (Math.abs(cropXY[0]!! - cropXY[2]!!) * sizeRatio).toInt(), (Math.abs(cropXY[1]!! - cropXY[3]!!) * sizeRatio).toInt(), MeteringRectangle.METERING_WEIGHT_MAX - 1)
 
-        activity.cameraApi!!.mCaptureSession?.stopRepeating()
-        activity.cameraApi!!.mPreviewRequestBuilder?.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_CANCEL)
-        activity.cameraApi!!.mPreviewRequestBuilder?.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF)
-        activity.cameraApi!!.mCaptureSession?.capture(activity.cameraApi!!.mPreviewRequestBuilder!!.build(), activity.cameraApi!!.mCaptureCallback, null)
+        activity.cameraApi!!.mCameraCaptureSession?.stopRepeating()
+        activity.cameraApi!!.mPreviewCaptureRequestBuilder?.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_CANCEL)
+        activity.cameraApi!!.mPreviewCaptureRequestBuilder?.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_OFF)
+        activity.cameraApi!!.mCameraCaptureSession?.capture(activity.cameraApi!!.mPreviewCaptureRequestBuilder!!.build(), activity.cameraApi!!.mCameraCaptureSessionCallback, null)
 
         if (activity.cameraApi!!.mCharacteristics!!.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AF) >= 1) {
-            activity.cameraApi!!.mPreviewRequestBuilder?.set(CaptureRequest.CONTROL_AF_REGIONS, arrayOf(focusXY))
+            activity.cameraApi!!.mPreviewCaptureRequestBuilder?.set(CaptureRequest.CONTROL_AF_REGIONS, arrayOf(focusXY))
         }
 
-        activity.cameraApi!!.mPreviewRequestBuilder?.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO)
-        activity.cameraApi!!.mPreviewRequestBuilder?.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO)
-        activity.cameraApi!!.mPreviewRequestBuilder?.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_START)
-        activity.cameraApi!!.mPreviewRequestBuilder?.setTag("FOCUS")
-        activity.cameraApi!!.mCaptureSession?.capture(activity.cameraApi!!.mPreviewRequestBuilder!!.build(), activity.cameraApi!!.mCaptureCallback, null)
+        activity.cameraApi!!.mPreviewCaptureRequestBuilder?.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO)
+        activity.cameraApi!!.mPreviewCaptureRequestBuilder?.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO)
+        activity.cameraApi!!.mPreviewCaptureRequestBuilder?.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_START)
+        activity.cameraApi!!.mPreviewCaptureRequestBuilder?.setTag("FOCUS")
+        activity.cameraApi!!.mCameraCaptureSession?.capture(activity.cameraApi!!.mPreviewCaptureRequestBuilder!!.build(), activity.cameraApi!!.mCameraCaptureSessionCallback, null)
         sendingFocusRequest = true
     }
 
