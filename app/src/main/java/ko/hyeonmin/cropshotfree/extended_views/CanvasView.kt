@@ -122,10 +122,10 @@ class CanvasView: View, View.OnTouchListener {
                     if (activity!!.console!!.centered) {
                         directOrgRect = Rect(fromToXY[0]!!.toInt(), fromToXY[1]!!.toInt(), fromToXY[2]!!.toInt(), fromToXY[3]!!.toInt())
                         canvas?.drawRect(directOrgRect, directOrgPaint)
-                        canvas?.drawLine(cropXY[0]!!, cropXY[1]!!, fromToXY[0]!!, fromToXY[1]!!, directOrgLinePaint)
-                        canvas?.drawLine(cropXY[0]!!, cropXY[3]!!, fromToXY[0]!!, fromToXY[3]!!, directOrgLinePaint)
-                        canvas?.drawLine(cropXY[2]!!, cropXY[1]!!, fromToXY[2]!!, fromToXY[1]!!, directOrgLinePaint)
-                        canvas?.drawLine(cropXY[2]!!, cropXY[3]!!, fromToXY[2]!!, fromToXY[3]!!, directOrgLinePaint)
+                        canvas?.drawLine(cropXY[0]!!, cropXY[1]!!, Math.min(fromToXY[0]!!, fromToXY[2]!!), Math.min(fromToXY[1]!!, fromToXY[3]!!), directOrgLinePaint)
+                        canvas?.drawLine(cropXY[0]!!, cropXY[3]!!, Math.min(fromToXY[0]!!, fromToXY[2]!!), Math.max(fromToXY[1]!!, fromToXY[3]!!), directOrgLinePaint)
+                        canvas?.drawLine(cropXY[2]!!, cropXY[1]!!, Math.max(fromToXY[0]!!, fromToXY[2]!!), Math.min(fromToXY[1]!!, fromToXY[3]!!), directOrgLinePaint)
+                        canvas?.drawLine(cropXY[2]!!, cropXY[3]!!, Math.max(fromToXY[0]!!, fromToXY[2]!!), Math.max(fromToXY[1]!!, fromToXY[3]!!), directOrgLinePaint)
                     }
                 }
             }
@@ -221,6 +221,7 @@ class CanvasView: View, View.OnTouchListener {
 
     override fun onTouch(view: View?, event: MotionEvent?): Boolean {
         if (activity!!.cameraApi!!.photoTaker.photoTaking) return false
+        if (activity!!.finishPopup!!.visibility == View.VISIBLE) return false
 
         when (event!!.action) {
             MotionEvent.ACTION_DOWN -> {
