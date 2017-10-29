@@ -60,6 +60,7 @@ class CameraAPI(activity: CropShotActivity) {
         progressDialog = ProgressDialog(activity)
         progressDialog?.setProgressStyle(ProgressDialog.STYLE_SPINNER)
         progressDialog?.setMessage(activity.resources.getString(R.string.saving_image))
+        progressDialog?.setCancelable(false)
         ORIENTATIONS.append(Surface.ROTATION_0, 90)
         ORIENTATIONS.append(Surface.ROTATION_90, 0)
         ORIENTATIONS.append(Surface.ROTATION_180, 270)
@@ -201,7 +202,7 @@ class CameraAPI(activity: CropShotActivity) {
             if (onOff) photoTaker.setPhotoTakingAndSpinner(true)
             mState = if (onOff) STATE_WAIT_LOCK else STATE_PREVIEW
             mPreviewCaptureRequestBuilder?.set(CaptureRequest.CONTROL_AF_TRIGGER,
-                    if (onOff) CaptureRequest.CONTROL_AF_TRIGGER_START else CaptureRequest.CONTROL_AF_TRIGGER_CANCEL)
+                    if (onOff) CaptureRequest.CONTROL_AF_STATE_FOCUSED_LOCKED else CaptureRequest.CONTROL_AF_TRIGGER_CANCEL)
             mPreviewCaptureRequestBuilder?.setTag("TAKE")
             mCameraCaptureSession?.capture(mPreviewCaptureRequestBuilder!!.build(),
                     mCameraCaptureSessionCallback, mBackgroundHandler)

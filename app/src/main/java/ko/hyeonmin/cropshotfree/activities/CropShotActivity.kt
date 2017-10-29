@@ -33,7 +33,6 @@ class CropShotActivity : Activity() {
     var console: Console? = null
     var panel: Panel? = null
     var canvasView: CanvasView? = null
-    var screenCaptor = ScreenCaptor(this)
 
     var mTouchFocus: TouchFocus? = null
 

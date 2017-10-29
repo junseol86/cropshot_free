@@ -41,6 +41,12 @@ class PhotoTaker(val cameraAPI: CameraAPI) {
         }
     }
 
+    fun showPreviewInit(fileName: String) {
+        handler.post({
+            cameraAPI.activity!!.panel!!.showPreview(fileName)
+        })
+    }
+
     class ImageSaver(val image: Image, val activity: CropShotActivity): Runnable {
         companion object {
             var mImageFile: File? = null
@@ -101,8 +107,19 @@ class PhotoTaker(val cameraAPI: CameraAPI) {
                 cropXY[it] = (activity.canvasView!!.cropXY[it]!! * width / activity.canvasView!!.width).toInt()
             }
 
-            cropBitmap = Bitmap.createBitmap(rotBitmap!!, offsetX + cropXY[0]!!.toInt(), offsetY + cropXY[1]!!.toInt(),
-                    Math.abs(cropXY[2]!! - cropXY[0]!!), Math.abs(cropXY[3]!! - cropXY[1]!!))
+            println(activity.canvasView!!.cropXY[0])
+            println(activity.canvasView!!.cropXY[1])
+            println(activity.canvasView!!.cropXY[2])
+            println(activity.canvasView!!.cropXY[3])
+
+            if (Math.abs(cropXY[0]!! - cropXY[2]!!) >= 20 && Math.abs(cropXY[1]!! - cropXY[3]!!) >= 20) {
+                cropBitmap = Bitmap.createBitmap(rotBitmap!!, offsetX + cropXY[0]!!.toInt(), offsetY + cropXY[1]!!.toInt(),
+                        Math.abs(cropXY[2]!! - cropXY[0]!!), Math.abs(cropXY[3]!! - cropXY[1]!!))
+            } else {
+                cropBitmap = Bitmap.createBitmap(rotBitmap!!, offsetX, offsetY,
+                        width, height)
+            }
+
             rotBitmap = null
 
             try {
@@ -124,6 +141,7 @@ class PhotoTaker(val cameraAPI: CameraAPI) {
                 MediaScannerConnection.scanFile(activity, arrayOf(fileName), arrayOf("image/jpg"), null)
 
                 activity.cameraApi!!.photoTaker.setPhotoTakingAndSpinner(false)
+                activity.cameraApi!!.photoTaker.showPreviewInit(fileName)
             }
         }
 

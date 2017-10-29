@@ -77,9 +77,8 @@ class GalleryRecyclerAdapter(activity: GalleryActivity, list: ArrayList<String>)
             }
         }
 
-        override fun doInBackground(vararg params: Void?): Bitmap {
-            return if (bitmapMap.containsKey(position)) bitmapMap[position]!! else loadThumbBitmap(position)
-        }
+        override fun doInBackground(vararg params: Void?): Bitmap =
+            if (bitmapMap.containsKey(position)) bitmapMap[position]!! else loadThumbBitmap(position)
 
         override fun onPostExecute(result: Bitmap?) {
             super.onPostExecute(result)
@@ -91,7 +90,7 @@ class GalleryRecyclerAdapter(activity: GalleryActivity, list: ArrayList<String>)
         }
 
         private fun loadThumbBitmap(position: Int): Bitmap {
-            var orgBitmap = BitmapFactory.decodeFile(list!![position])
+            val orgBitmap = BitmapFactory.decodeFile(list!![position])
 
             val itemBitmap = if (orgBitmap.width > orgBitmap.height) {
                 Bitmap.createScaledBitmap(orgBitmap, itemWidth, (orgBitmap.height * itemWidth.toFloat() / orgBitmap.width).toInt(), true)

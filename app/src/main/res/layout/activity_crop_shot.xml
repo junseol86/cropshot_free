@@ -224,6 +224,34 @@
                 android:textSize="16dp"
                 />
         </android.support.constraint.ConstraintLayout>
+        <LinearLayout
+            android:id="@+id/deleteRecentPanel"
+            android:layout_width="104dp"
+            android:layout_height="52dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:visibility="gone"
+            >
+            <ImageView
+                android:id="@+id/deleteRecentButton"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:src="@drawable/remove"
+                />
+            <RelativeLayout
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:src="@drawable/remove"
+                android:background="#222222"
+                >
+                <ImageView
+                    android:id="@+id/recentPreview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
+            </RelativeLayout>
+        </LinearLayout>
     </android.support.constraint.ConstraintLayout>
 
     <ImageView
@@ -261,7 +289,7 @@
             ads:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="20dp"
             ads:adSize="LARGE_BANNER"
-            ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
+            ads:adUnitId="ca-app-pub-6948199413384164/9990921467">
         </com.google.android.gms.ads.AdView>
 
         <RelativeLayout

@@ -1,14 +1,16 @@
 package ko.hyeonmin.cropshotfree.uitls
 
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Environment
 import android.support.constraint.ConstraintLayout
 import android.support.v4.content.FileProvider
 import android.view.MotionEvent
 import android.view.View
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import ko.hyeonmin.cropshotfree.activities.CropShotActivity
 import ko.hyeonmin.cropshotfree.R
@@ -28,6 +30,11 @@ class Panel(activity: CropShotActivity) {
     var directory = ""
     var folder: File? = null
     var createFolderSucess = false
+
+    var deleteRecentPanel: LinearLayout? = null
+    var deleteRecentBtn: ImageView? = null
+    var recentPreview: ImageView? = null
+    var recentFileName = ""
 
     init {
         panelCl = activity.findViewById(R.id.panel) as ConstraintLayout
@@ -64,5 +71,42 @@ class Panel(activity: CropShotActivity) {
             }
             false
         }
+
+        deleteRecentPanel = activity.findViewById(R.id.deleteRecentPanel) as LinearLayout
+        deleteRecentBtn = activity.findViewById(R.id.deleteRecentButton) as ImageView
+        deleteRecentBtn?.setOnClickListener {
+            AlertDialog.Builder(activity)
+                    .setTitle(R.string.remove_a_photo)
+                    .setPositiveButton(activity.resources.getString(R.string.yes), {_, _ ->
+                        val fileToDelete = File(recentFileName)
+                        if (fileToDelete.exists()) {
+                            if (fileToDelete.delete()) {
+                                deleteRecentPanel?.visibility = View.GONE
+                            }
+                        }
+                    })
+                    .setNegativeButton(activity.resources.getString(R.string.no), {_, _ ->
+                    })
+                    .show()
+        }
+        recentPreview = activity.findViewById(R.id.recentPreview) as ImageView
+        recentPreview?.setOnClickListener {
+            val intent = Intent()
+            intent.action = Intent.ACTION_VIEW
+            intent.setDataAndType(FileProvider.getUriForFile(
+                    activity,
+                    "ko.hyeonmin.cropshotfree.provider",
+                    File(recentFileName)),
+                    "image/*")
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            activity.startActivity(intent)
+        }
     }
+
+    fun showPreview(fileName: String) {
+        deleteRecentPanel?.visibility = View.VISIBLE
+        recentPreview?.setImageBitmap(BitmapFactory.decodeFile(fileName))
+        recentFileName = fileName
+    }
+
 }
